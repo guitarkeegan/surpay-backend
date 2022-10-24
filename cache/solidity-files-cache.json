@@ -2,9 +2,53 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/KeeganLaptop/chainlink-bootcamp/surpay-backend/contracts/Surpay.sol": {
-      "lastModificationDate": 1666629877998,
-      "contentHash": "6f7b981f36b73091d38e884f016caf41",
+      "lastModificationDate": 1666633009267,
+      "contentHash": "df0b8a42c9f4d48e21f8418596a1a791",
       "sourceName": "contracts/Surpay.sol",
+      "solcConfig": {
+        "version": "0.8.17",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.8"
+      ],
+      "artifacts": [
+        "Surpay"
+      ]
+    },
+    "/Users/KeeganLaptop/chainlink-bootcamp/surpay-backend/node_modules/@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol": {
+      "lastModificationDate": 1666632683742,
+      "contentHash": "c52969cee392918edbf23f914e01c0dc",
+      "sourceName": "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol",
       "solcConfig": {
         "version": "0.8.17",
         "settings": {
@@ -37,10 +81,10 @@
       },
       "imports": [],
       "versionPragmas": [
-        "^0.8.8"
+        "^0.8.0"
       ],
       "artifacts": [
-        "Surpay"
+        "AutomationCompatibleInterface"
       ]
     }
   }
