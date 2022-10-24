@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/KeeganLaptop/chainlink-bootcamp/surpay-backend/contracts/Surpay.sol": {
-      "lastModificationDate": 1666568670895,
-      "contentHash": "d5d84517c7c774579261ac13e9079e82",
+      "lastModificationDate": 1666629877998,
+      "contentHash": "6f7b981f36b73091d38e884f016caf41",
       "sourceName": "contracts/Surpay.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -19,12 +19,19 @@
                 "evm.bytecode",
                 "evm.deployedBytecode",
                 "evm.methodIdentifiers",
-                "metadata"
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
               ],
               "": [
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": true
           }
         }
       },
