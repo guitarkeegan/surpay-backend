@@ -22,5 +22,8 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             it("should be setup with the correct interval", async function(){
                 assert.equal(interval.toString(), networkConfig[chainId]["interval"]);
             });
+            it("should be setup with correct survey creation fee", async function(){
+                assert.equal(surveyCreationFee.toString(), networkConfig[chainId]["surveyCreationFee"]);
+            });
         })
     })
