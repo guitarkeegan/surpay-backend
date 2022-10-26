@@ -34,15 +34,13 @@ contract Surpay is AutomationCompatibleInterface{
     }
     
     /* state variables  */
-    Survey[] private surveys;
-    Survey[] private completeSurveys;
+    Survey[] private s_surveys;
+    Survey[] private s_completeSurveys;
     uint256 private immutable surveyCreationFee;
-    uint256 private immutable companyCreationFee;
 
     /* constructor */
-    constructor(uint256 _surveyCreationFee, uint256 _companyCreationFee){
+    constructor(uint256 _surveyCreationFee){
         surveyCreationFee = _surveyCreationFee;
-        companyCreationFee = _companyCreationFee;
     }
 
     /* events */
@@ -51,23 +49,22 @@ contract Surpay is AutomationCompatibleInterface{
     
 
     /* functions */
-
     function performUpkeep(bytes calldata /* performData */) external override{
         (bool upkeepNeeded, ) = checkUpkeep("");
         // logic for what should happen if upkeepNeeded is true
+
     }
 
     function checkUpkeep(bytes memory /* checkData */) public returns (bool upkeepNeeded, bytes memory /* performData */){
         // conditions for automation to be performed
-        Survey[] memory allSurveys = surveys;
-        completeSurveys;
+        Survey[] memory allSurveys = s_surveys;
         for (uint256 i=0;i<allSurveys.length;i++){
             if (allSurveys[i].surveyState == SurveyState.COMPLETED){
-                completeSurveys.push(allSurveys[i]);
+                s_completeSurveys.push(allSurveys[i]);
                 allSurveys[i].surveyState = SurveyState.CONCLUDED;
             }
         }
-        if (completeSurveys.length > 0){
+        if (s_completeSurveys.length > 0){
             upkeepNeeded = true;
         }
 
@@ -83,14 +80,20 @@ contract Surpay is AutomationCompatibleInterface{
                 revert Surpay__NotEnoughFunds();
             }
             // validate that fields are not empty
-            address sender = msg.sender;
 
-            surveys.push(Survey(_surveyId, _companyId, sender, _totalPaymentAmount, _numOfParticipantsDesired, 0, [string], [address], SurveyState.OPEN));
+            Survey memory newSurvey;
+            newSurvey.surveyId = _surveyId;
+            newSurvey.companyId = _companyId;
+            newSurvey.companyAddress = msg.sender;
+            newSurvey.totalPayoutAmount = _totalPaymentAmount;
+            newSurvey.numOfParticapantsDesired = _numOfParticipantsDesired;
+            newSurvey.surveyState = SurveyState.OPEN;
+            s_surveys.push(newSurvey);
     }
 
-    // function distributeFundsFromCompletedSurveys() internal {
+    function distributeFundsFromCompletedSurveys() internal {
         
-    // }
+    }
 
     // function clearConcludedSurveys(){}
     
