@@ -2,11 +2,20 @@
 
 pragma solidity ^0.8.8;
 
+/**
+ * @title Surpay
+ * @author Keegan Anglim and Alan Abed
+ * @notice This contract is meant to be a demo and should not be used
+ * in production
+ * 
+ */
+
 // import AutomationCompatibleInterface
 import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 error Surpay__NotEnoughFunds();
 error Surpay__MissingRequiredFields();
+error Surpay__TransferFailed();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -20,13 +29,17 @@ contract Surpay is AutomationCompatibleInterface{
         string companyId;
         address companyAddress;
         uint256 totalPayoutAmount;
-        uint256 numOfParticapantsDesired;
-        uint256 numOfParticapantsFullfilled;
+        uint256 numOfParticipantsDesired;
+        uint256 numOfParticipantsFulfilled;
         string[] surveyResponseData;
         address payable[] surveyTakers;
         SurveyState surveyState;
     }
-
+    /**
+     * @dev Each survey struct has a state field. When the survey is created * and funded, it is OPEN. After the survey has been completed with the *  numOfParticipantsFullfilled, the survey changes to COMPLETED. 
+     * After the suvey takers have been paid, the survey is marked CONCLUDED,
+     * and is marked for deletion. 
+     */
     enum SurveyState{
         OPEN,
         COMPLETED,
@@ -79,20 +92,42 @@ contract Surpay is AutomationCompatibleInterface{
             if (msg.value < surveyCreationFee){
                 revert Surpay__NotEnoughFunds();
             }
-            // validate that fields are not empty
+            // TODO: validate that fields are not empty
 
             Survey memory newSurvey;
             newSurvey.surveyId = _surveyId;
             newSurvey.companyId = _companyId;
             newSurvey.companyAddress = msg.sender;
             newSurvey.totalPayoutAmount = _totalPaymentAmount;
-            newSurvey.numOfParticapantsDesired = _numOfParticipantsDesired;
+            newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;
             newSurvey.surveyState = SurveyState.OPEN;
             s_surveys.push(newSurvey);
+            emit SurveyCreated(_surveyId);
     }
 
-    function distributeFundsFromCompletedSurveys() internal {
-        
+    function distributeFundsFromCompletedSurvey(string memory _surveyId) internal {
+        Survey[] memory allSurveys = s_completeSurveys;
+
+        address payable[] memory surveyTakersToPayout;
+        // 16 zeros for 0.01 eth
+        uint256 ethToPay;
+
+        for(uint256 i=0;i<allSurveys.length;i++){
+            if (keccak256(abi.encodePacked(allSurveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
+                surveyTakersToPayout = allSurveys[i].surveyTakers;
+                ethToPay = allSurveys[i].totalPayoutAmount / allSurveys[i].numOfParticipantsFulfilled;
+                break;
+            }
+        }
+
+        for(uint256 i=0;i<surveyTakersToPayout.length;i++){
+            if (ethToPay < address(this).balance){
+                (bool success, ) = surveyTakersToPayout[i].call{value: ethToPay}("");
+                if (!success){
+                    revert Surpay__TransferFailed();
+                }
+            }
+        }
     }
 
     // function clearConcludedSurveys(){}
