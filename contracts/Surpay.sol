@@ -51,9 +51,13 @@ contract Surpay is AutomationCompatibleInterface{
     Survey[] private s_completeSurveys;
     uint256 private immutable surveyCreationFee;
 
+    /* survey variables  */
+    uint256 private immutable i_interval;
+
     /* constructor */
-    constructor(uint256 _surveyCreationFee){
+    constructor(uint256 _surveyCreationFee, uint256 _interval){
         surveyCreationFee = _surveyCreationFee;
+        i_interval = _interval;
     }
 
     /* events */
