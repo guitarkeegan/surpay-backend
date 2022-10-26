@@ -32,14 +32,14 @@ module.exports = {
   etherscan: {
     apiKey: ETHERSCAN_API_KEY,
   },
-  // gasReporter: {
-  //   enabled: true,
-  //   outputFile: "gas-report.txt",
-  //   noColors: true,
-  //   currency: "USD",
-  //   coinmarketcap: COINMARKETCAP_API_KEY,
-  //   token: "ETH"
-  // },
+  gasReporter: {
+    enabled: false,
+    outputFile: "gas-report.txt",
+    noColors: true,
+    currency: "USD",
+    // coinmarketcap: COINMARKETCAP_API_KEY,
+    token: "ETH"
+  },
   solidity: "0.8.17",
   namedAccounts:{
     deployer: {

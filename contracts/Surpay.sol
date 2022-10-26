@@ -49,14 +49,15 @@ contract Surpay is AutomationCompatibleInterface{
     /* state variables  */
     Survey[] private s_surveys;
     Survey[] private s_completeSurveys;
-    uint256 private immutable surveyCreationFee;
+    uint256 private immutable i_surveyCreationFee;
 
     /* survey variables  */
     uint256 private immutable i_interval;
 
     /* constructor */
     constructor(uint256 _surveyCreationFee, uint256 _interval){
-        surveyCreationFee = _surveyCreationFee;
+        
+        i_surveyCreationFee = _surveyCreationFee;
         i_interval = _interval;
     }
 
@@ -94,7 +95,7 @@ contract Surpay is AutomationCompatibleInterface{
         uint256 _totalPaymentAmount, 
         uint256 _numOfParticipantsDesired
         ) public payable {
-            if (msg.value < surveyCreationFee){
+            if (msg.value < i_surveyCreationFee){
                 revert Surpay__NotEnoughFunds();
             }
             // TODO: validate that fields are not empty
@@ -146,6 +147,14 @@ contract Surpay is AutomationCompatibleInterface{
             }
         }
         return currentState;
+    }
+
+    function getSurveyCreationFee() public view returns(uint256) {
+        return i_surveyCreationFee;
+    }
+
+    function getInterval() public view returns(uint256) {
+        return i_interval;
     }
 
     // function clearConcludedSurveys(){}
