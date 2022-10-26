@@ -59,6 +59,7 @@ contract Surpay is AutomationCompatibleInterface{
     /* events */
     event SurveyCreated(string indexed surveyId);
     event SurveyCompleted(string indexed surveyData);
+    event SurveyTakerPaid(address indexed paidSurveyTaker);
     
 
     /* functions */
@@ -128,6 +129,19 @@ contract Surpay is AutomationCompatibleInterface{
                 }
             }
         }
+
+    }
+
+    /* view/pure functions  */
+
+    function getSurveyState(string memory _surveyId) public view returns(SurveyState){
+        SurveyState currentState;
+        for(uint256 i=0;i<s_surveys.length;i++){
+            if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
+                currentState = s_surveys[i].surveyState;
+            }
+        }
+        return currentState;
     }
 
     // function clearConcludedSurveys(){}
