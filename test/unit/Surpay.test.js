@@ -80,4 +80,31 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
             });
         })
+        describe("distributeFundsFromCompletedSurvey", function(){
+
+            beforeEach(async function(){
+                await surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    );
+                const accounts = await ethers.getSigners();
+                const account1ConnectedSurpay = surpay.connect(accounts[1]);
+                const account2ConnectedSurpay = surpay.connect(accounts[2]);
+                
+                await account1ConnectedSurpay.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["surveyResponseData"][0])
+                await account2ConnectedSurpay.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    // mary jane data
+                    networkConfig[chainId]["surveyResponseData"][1])
+            });
+
+            it("should send funds to all survey takers", async function(){
+                // will need to mimic chainlink automation for this part
+            })
+        })
     })
