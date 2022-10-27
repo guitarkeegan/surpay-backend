@@ -64,6 +64,7 @@ contract Surpay is AutomationCompatibleInterface{
 
     /* events */
     event SurveyCreated(string indexed surveyId);
+    event UserAddedToSurvey(address indexed surveyTaker);
     event SurveyCompleted(string indexed surveyData);
     event SurveyTakerPaid(address indexed paidSurveyTaker);
     
@@ -113,15 +114,17 @@ contract Surpay is AutomationCompatibleInterface{
     }
 
     function sendUserSurveyData(string memory _surveyId, string memory _surveyData) public {
-
         // get the survey by id
         for (uint256 i=0;i<s_surveys.length;i++){
             if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
                 // store the user address, store survey data in Survey object
                 s_surveys[i].surveyResponseData.push(_surveyData);
                 s_surveys[i].surveyTakers.push(payable(msg.sender));
+                emit UserAddedToSurvey(msg.sender);
+                return;
             }
         }
+
     }
 
     function distributeFundsFromCompletedSurvey(string memory _surveyId) internal {
@@ -185,6 +188,15 @@ contract Surpay is AutomationCompatibleInterface{
         } else {
             revert Surpay__SurveyNotFound();
         }
+    }
+
+    function getSurveyTakerByIndex(uint256 surveyIndex, uint256 userIndex) public view returns(address){
+        // add the address of a survey taker
+        return s_surveys[surveyIndex].surveyTakers[userIndex];
+    }
+
+    function getSurveyResponseDataByIndex(uint256 surveyIndex, uint256 responseIndex) public view returns(string memory){
+        return s_surveys[surveyIndex].surveyResponseData[responseIndex];
     }
 
     // function clearConcludedSurveys(){}
