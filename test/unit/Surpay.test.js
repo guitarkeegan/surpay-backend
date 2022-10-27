@@ -25,5 +25,21 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             it("should be setup with correct survey creation fee", async function(){
                 assert.equal(surveyCreationFee.toString(), networkConfig[chainId]["surveyCreationFee"]);
             });
+
+        })
+
+        describe("createSurvey", function(){
+
+            it("should create a new survey and store it to surveys", async function(){
+                await surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    );
+                const createdSurveyId = await surpay.getSurveyByIndex(0);
+                assert.equal(createdSurveyId.toString(), "1");
+            })
         })
     })

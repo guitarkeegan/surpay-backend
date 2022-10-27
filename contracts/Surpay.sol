@@ -16,6 +16,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.s
 error Surpay__NotEnoughFunds();
 error Surpay__MissingRequiredFields();
 error Surpay__TransferFailed();
+error Surpay__SurveyNotFound();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -92,7 +93,7 @@ contract Surpay is AutomationCompatibleInterface{
     function createSurvey(
         string memory _surveyId,
         string memory _companyId, 
-        uint256 _totalPaymentAmount, 
+        uint256 _totalPayoutAmount, 
         uint256 _numOfParticipantsDesired
         ) public payable {
             if (msg.value < i_surveyCreationFee){
@@ -104,7 +105,7 @@ contract Surpay is AutomationCompatibleInterface{
             newSurvey.surveyId = _surveyId;
             newSurvey.companyId = _companyId;
             newSurvey.companyAddress = msg.sender;
-            newSurvey.totalPayoutAmount = _totalPaymentAmount;
+            newSurvey.totalPayoutAmount = _totalPayoutAmount;
             newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;
             newSurvey.surveyState = SurveyState.OPEN;
             s_surveys.push(newSurvey);
@@ -155,6 +156,15 @@ contract Surpay is AutomationCompatibleInterface{
 
     function getInterval() public view returns(uint256) {
         return i_interval;
+    }
+
+    function getSurveyByIndex(uint256 index) public view returns(string memory) {
+        
+        if (index < s_surveys.length){
+            return s_surveys[index].surveyId;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
     }
 
     // function clearConcludedSurveys(){}
