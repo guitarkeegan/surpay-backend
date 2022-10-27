@@ -112,7 +112,17 @@ contract Surpay is AutomationCompatibleInterface{
             emit SurveyCreated(_surveyId);
     }
 
-    // function sendUserSurveyData() private 
+    function sendUserSurveyData(string memory _surveyId, string memory _surveyData) public {
+
+        // get the survey by id
+        for (uint256 i=0;i<s_surveys.length;i++){
+            if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
+                // store the user address, store survey data in Survey object
+                s_surveys[i].surveyResponseData.push(_surveyData);
+                s_surveys[i].surveyTakers.push(payable(msg.sender));
+            }
+        }
+    }
 
     function distributeFundsFromCompletedSurvey(string memory _surveyId) internal {
         Survey[] memory allSurveys = s_completeSurveys;
