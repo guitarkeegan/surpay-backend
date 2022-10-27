@@ -40,6 +40,15 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     );
                 const createdSurveyId = await surpay.getSurveyByIndex(0);
                 assert.equal(createdSurveyId.toString(), "1");
-            })
+            });
+            it("should emit a survey created event", async function(){
+                await expect(surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    )).to.emit(surpay, "SurveyCreated");
+            });
         })
     })

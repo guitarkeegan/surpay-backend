@@ -112,6 +112,8 @@ contract Surpay is AutomationCompatibleInterface{
             emit SurveyCreated(_surveyId);
     }
 
+    // function sendUserSurveyData() private 
+
     function distributeFundsFromCompletedSurvey(string memory _surveyId) internal {
         Survey[] memory allSurveys = s_completeSurveys;
 
@@ -159,9 +161,17 @@ contract Surpay is AutomationCompatibleInterface{
     }
 
     function getSurveyByIndex(uint256 index) public view returns(string memory) {
-        
+
         if (index < s_surveys.length){
             return s_surveys[index].surveyId;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+    }
+
+    function getPayoutByIndex(uint256 index) public view returns(uint256){
+         if (index < s_surveys.length){
+            return s_surveys[index].totalPayoutAmount;
         } else {
             revert Surpay__SurveyNotFound();
         }
