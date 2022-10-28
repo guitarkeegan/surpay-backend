@@ -11,6 +11,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
 
         beforeEach(async function(){
             deployer = (await getNamedAccounts()).deployer;
+            console.log("Deploying contract...")
             await deployments.fixture(["all"]);
             surpay = await ethers.getContract("Surpay", deployer);
             surveyCreationFee = await surpay.getSurveyCreationFee();
@@ -52,7 +53,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             });
         });
         describe("sendUserSurveyData", function(){
-
+            console.log("creating survey...")
             beforeEach(async function(){
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
@@ -79,6 +80,45 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 // user data should match the data that was passed in.
                 assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
             });
+        })
+        describe("checkUpkeep", function(){
+
+            beforeEach(async function(){
+                console.log("creating survey...")
+                await surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    );
+            });
+
+            it("returns false if there are no completed surveys", async function(){
+                const {upkeepNeeded} = await surpay.callStatic.checkUpkeep("0x");
+                assert(!upkeepNeeded);
+            });
+            it("returns true if the desired number of survey takers has been fulfilled", async function(){
+
+                const accounts = await ethers.getSigners();
+                const account1ConnectedSurpay = surpay.connect(accounts[1]);
+                const account2ConnectedSurpay = surpay.connect(accounts[2]);
+                
+                await account1ConnectedSurpay.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["surveyResponseData"][0]);
+                await account2ConnectedSurpay.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    // mary jane data
+                    networkConfig[chainId]["surveyResponseData"][1]);
+
+                await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+                await network.provider.send("evm_mine", []);
+
+                const {upkeepNeeded} = await surpay.callStatic.checkUpkeep([]);
+                console.log(upkeepNeeded);
+                assert(upkeepNeeded);
+            })
         })
         describe("distributeFundsFromCompletedSurvey", function(){
             let startTimeStamp;
@@ -110,11 +150,15 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             it("should send funds to all survey takers", async function(){
                 // will need to mimic chainlink automation for this part
                 //get start time stamp from survey struct
-                const startTimeStamp = await surpay.getLastTimeStampBySurveyIndex(0);
+                
                 await new Promise( async (reject, resolve) => {
                     surpay.once("SurveyCreated", async ()=>{
                         console.log("New survey event has fired!");
-
+                        try {
+                            console.log("hi")
+                        } catch {
+                            console.log("yo")
+                        }
                     });
                     // kicking off the event by mocking the chainlink automation
                     const tx = await surpay.performUpkeep("0x");

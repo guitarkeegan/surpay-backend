@@ -45,8 +45,7 @@ contract Surpay is AutomationCompatibleInterface{
      */
     enum SurveyState{
         OPEN,
-        COMPLETED,
-        CONCLUDED
+        COMPLETED
     }
     
     /* state variables  */
@@ -68,14 +67,21 @@ contract Surpay is AutomationCompatibleInterface{
     event SurveyCreated(string indexed surveyId);
     event UserAddedToSurvey(address indexed surveyTaker);
     event SurveyCompleted(string indexed surveyData);
-    event SurveyTakerPaid(address indexed paidSurveyTaker);
+    event SurveyTakersPaid(string indexed surveyId);
     
 
     /* functions */
     function performUpkeep(bytes calldata /* performData */) external override{
         (bool upkeepNeeded, ) = checkUpkeep("");
         // logic for what should happen if upkeepNeeded is true
-
+        if (upkeepNeeded) {
+            Survey[] memory completedSurveys = s_completeSurveys;
+            for (uint256 i=0;i<completedSurveys.length;i++){
+            distributeFundsFromCompletedSurvey(i);
+            emit SurveyTakersPaid(completedSurveys[i].surveyId);
+        }
+        
+        }
     }
 
     function checkUpkeep(bytes memory /* checkData */) public returns (bool upkeepNeeded, bytes memory /* performData */){
@@ -84,11 +90,12 @@ contract Surpay is AutomationCompatibleInterface{
         for (uint256 i=0;i<allSurveys.length;i++){
             if (allSurveys[i].surveyState == SurveyState.COMPLETED){
                 s_completeSurveys.push(allSurveys[i]);
-                allSurveys[i].surveyState = SurveyState.CONCLUDED;
             }
         }
         if (s_completeSurveys.length > 0){
             upkeepNeeded = true;
+        } else {
+            upkeepNeeded = false;
         }
 
     }
@@ -120,12 +127,20 @@ contract Surpay is AutomationCompatibleInterface{
         // get the survey by id
         for (uint256 i=0;i<s_surveys.length;i++){
             if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
-                if (s_surveys[i].numOfParticipantsDesired < s_surveys[i].numOfParticipantsFulfilled) {
+
+                if (s_surveys[i].numOfParticipantsDesired > s_surveys[i].numOfParticipantsFulfilled) {
                     // store the user address, store survey data in Survey object
                     s_surveys[i].surveyResponseData.push(_surveyData);
                     s_surveys[i].surveyTakers.push(payable(msg.sender));
+                    s_surveys[i].numOfParticipantsFulfilled++;
+                    // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED
+                    if (s_surveys[i].numOfParticipantsDesired == s_surveys[i].numOfParticipantsFulfilled) {
+                        s_surveys[i].surveyState = SurveyState.COMPLETED;
+                    }
+
                     emit UserAddedToSurvey(msg.sender);
                     break;
+
                 } else {
                     revert Surpay__MaximumRespondantsReached();
                 }
@@ -134,24 +149,18 @@ contract Surpay is AutomationCompatibleInterface{
 
     }
 
-    function distributeFundsFromCompletedSurvey(string memory _surveyId) internal {
-        Survey[] memory allSurveys = s_completeSurveys;
-
-        address payable[] memory surveyTakersToPayout;
+    function distributeFundsFromCompletedSurvey(uint256 index) internal {
+        // copy state variable to local varable for payout itteration
+        Survey[] memory completedSurveys = s_completeSurveys;
         // 16 zeros for 0.01 eth
+        // total payout amount is divided between the number of participants
         uint256 ethToPay;
 
-        for(uint256 i=0;i<allSurveys.length;i++){
-            if (keccak256(abi.encodePacked(allSurveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
-                surveyTakersToPayout = allSurveys[i].surveyTakers;
-                ethToPay = allSurveys[i].totalPayoutAmount / allSurveys[i].numOfParticipantsFulfilled;
-                break;
-            }
-        }
+        ethToPay = completedSurveys[index].totalPayoutAmount / completedSurveys[index].numOfParticipantsFulfilled;        
 
-        for(uint256 i=0;i<surveyTakersToPayout.length;i++){
+        for(uint256 i=0;i<completedSurveys[index].surveyTakers.length;i++){
             if (ethToPay < address(this).balance){
-                (bool success, ) = surveyTakersToPayout[i].call{value: ethToPay}("");
+                (bool success, ) = completedSurveys[index].surveyTakers[i].call{value: ethToPay}("");
                 if (!success){
                     revert Surpay__TransferFailed();
                 }
