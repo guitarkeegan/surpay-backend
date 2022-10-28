@@ -81,7 +81,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             });
         })
         describe("distributeFundsFromCompletedSurvey", function(){
-
+            let startTimeStamp;
             beforeEach(async function(){
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
@@ -90,6 +90,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
+                startTimeStamp = await surpay.getLastTimeStampBySurveyIndex(0);
                 const accounts = await ethers.getSigners();
                 const account1ConnectedSurpay = surpay.connect(accounts[1]);
                 const account2ConnectedSurpay = surpay.connect(accounts[2]);
@@ -101,10 +102,27 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["surveyId"][0],
                     // mary jane data
                     networkConfig[chainId]["surveyResponseData"][1])
+
+                await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+                await network.provider.send("evm_mine", []);
             });
 
             it("should send funds to all survey takers", async function(){
                 // will need to mimic chainlink automation for this part
-            })
+                //get start time stamp from survey struct
+                const startTimeStamp = await surpay.getLastTimeStampBySurveyIndex(0);
+                await new Promise( async (reject, resolve) => {
+                    surpay.once("SurveyCreated", async ()=>{
+                        console.log("New survey event has fired!");
+
+                    });
+                    // kicking off the event by mocking the chainlink automation
+                    const tx = await surpay.performUpkeep("0x");
+                    const txReceipt = await tx.wait(1);
+                    const joeStartingBalance = await accounts[1].getBalance();
+                    const maryStartingBalance = await accounts[2].getBalance();
+
+                });
+            });
         })
     })

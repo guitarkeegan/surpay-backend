@@ -17,6 +17,7 @@ error Surpay__NotEnoughFunds();
 error Surpay__MissingRequiredFields();
 error Surpay__TransferFailed();
 error Surpay__SurveyNotFound();
+error Surpay__MaximumRespondantsReached();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -34,6 +35,7 @@ contract Surpay is AutomationCompatibleInterface{
         uint256 numOfParticipantsFulfilled;
         string[] surveyResponseData;
         address payable[] surveyTakers;
+        uint256 startTimeStamp;
         SurveyState surveyState;
     }
     /**
@@ -108,6 +110,7 @@ contract Surpay is AutomationCompatibleInterface{
             newSurvey.companyAddress = msg.sender;
             newSurvey.totalPayoutAmount = _totalPayoutAmount;
             newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;
+            newSurvey.startTimeStamp = block.timestamp;
             newSurvey.surveyState = SurveyState.OPEN;
             s_surveys.push(newSurvey);
             emit SurveyCreated(_surveyId);
@@ -117,11 +120,15 @@ contract Surpay is AutomationCompatibleInterface{
         // get the survey by id
         for (uint256 i=0;i<s_surveys.length;i++){
             if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
-                // store the user address, store survey data in Survey object
-                s_surveys[i].surveyResponseData.push(_surveyData);
-                s_surveys[i].surveyTakers.push(payable(msg.sender));
-                emit UserAddedToSurvey(msg.sender);
-                return;
+                if (s_surveys[i].numOfParticipantsDesired < s_surveys[i].numOfParticipantsFulfilled) {
+                    // store the user address, store survey data in Survey object
+                    s_surveys[i].surveyResponseData.push(_surveyData);
+                    s_surveys[i].surveyTakers.push(payable(msg.sender));
+                    emit UserAddedToSurvey(msg.sender);
+                    break;
+                } else {
+                    revert Surpay__MaximumRespondantsReached();
+                }
             }
         }
 
@@ -197,6 +204,10 @@ contract Surpay is AutomationCompatibleInterface{
 
     function getSurveyResponseDataByIndex(uint256 surveyIndex, uint256 responseIndex) public view returns(string memory){
         return s_surveys[surveyIndex].surveyResponseData[responseIndex];
+    }
+
+    function getLastTimeStampBySurveyIndex(uint256 surveyIndex) public view returns(uint256){
+        return s_surveys[surveyIndex].startTimeStamp;
     }
 
     // function clearConcludedSurveys(){}
