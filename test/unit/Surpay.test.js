@@ -147,7 +147,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await network.provider.send("evm_mine", []);
             });
 
-            it("should send funds to all survey takers, survey taker's wallet balance should be bigger than before", async function(){
+            it("should send funds to all survey takers, survey taker's wallet balance should be equal to the projected payout amout", async function(){
                 // will need to mimic chainlink automation for this part
                 //get start time stamp from survey struct
                 
@@ -159,6 +159,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                             const maryEndingBalance = await accounts[2].getBalance();
                             assert(joeEndingBalance > joeStartingBalance);
                             assert(maryEndingBalance > maryStartingBalance);
+                            assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyIndex(0)));
                             resolve();
                         } catch (e) {
                             reject(e);

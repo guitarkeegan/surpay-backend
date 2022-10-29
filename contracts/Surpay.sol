@@ -26,6 +26,7 @@ contract Surpay is AutomationCompatibleInterface{
     /**
      * @dev Survey will hold the survey ID as well as a mapping for each user address and response data for the survey.
      */
+    // TODO: may need to refactor with mapping of (surveyID: Survey)
     struct Survey{
         string surveyId;
         string companyId;
@@ -51,6 +52,7 @@ contract Surpay is AutomationCompatibleInterface{
     /* state variables  */
     Survey[] private s_surveys;
     Survey[] private s_completeSurveys;
+    // uint256[] private s_surveysToDelete;
     uint256 private immutable i_surveyCreationFee;
 
     /* survey variables  */
@@ -80,7 +82,7 @@ contract Surpay is AutomationCompatibleInterface{
             distributeFundsFromCompletedSurvey(i);
             emit SurveyTakersPaid(completedSurveys[i].surveyId);
         }
-        
+        // clean up completed surveys
         }
     }
 
@@ -90,6 +92,7 @@ contract Surpay is AutomationCompatibleInterface{
         for (uint256 i=0;i<allSurveys.length;i++){
             if (allSurveys[i].surveyState == SurveyState.COMPLETED){
                 s_completeSurveys.push(allSurveys[i]);
+                // s_surveysToDelete.push(i);
             }
         }
         if (s_completeSurveys.length > 0){
@@ -160,7 +163,7 @@ contract Surpay is AutomationCompatibleInterface{
         uint256 ethToPay;
 
         ethToPay = completedSurveys[index].totalPayoutAmount / completedSurveys[index].numOfParticipantsFulfilled;        
-        
+
         for(uint256 i=0;i<completedSurveys[index].surveyTakers.length;i++){
             if (ethToPay < address(this).balance){
                 (bool success, ) = completedSurveys[index].surveyTakers[i].call{value: ethToPay}("");
@@ -169,6 +172,8 @@ contract Surpay is AutomationCompatibleInterface{
                 }
             }
         }
+        // clear completed surveys array
+        // s_completeSurveys = new Survey[](0);
 
     }
 
@@ -222,7 +227,13 @@ contract Surpay is AutomationCompatibleInterface{
         return s_surveys[surveyIndex].startTimeStamp;
     }
 
-    // function clearConcludedSurveys(){}
+    function getPayoutPerPersonBySurveyIndex(uint256 surveyIndex) public view returns(uint256){
+        return s_surveys[surveyIndex].totalPayoutAmount / s_surveys[surveyIndex].numOfParticipantsDesired;
+    }
+
+    // function removeConcludedSurveys() public {
+    //     s_completeSurveys = [](0);
+    // }
     
     // function submitUserSurveyData(){}
    
