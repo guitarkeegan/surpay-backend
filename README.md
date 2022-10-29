@@ -22,7 +22,7 @@
 
   ## Installation
 
-  Clone the repo, then install hardhat along with all dependancies. You will need to setup a .env file in order to run locally. The .env file should include: GOERLI_RPC_URL which can be found in the developer section of https://chain.link/, PRIVATE_KEY from you metamask wallet, ETHERSCAN_API_KEY which you can get for from from Etherscan, and the COINMARKETCAP_API_KEY which you can also get for free from coinmarketcap. Once you have installed all dependancies ```yarn install``` or ```npm i```, you can run the script locally with ```yarn hardhat deploy```.
+  Clone the repo, then install hardhat along with all dependancies. You will need to setup a .env file in order to deploy to the Goerli test net. The .env file should include: GOERLI_RPC_URL which can be found in the developer section of https://chain.link/, PRIVATE_KEY from you metamask wallet, ETHERSCAN_API_KEY which you can get for from from Etherscan, and the COINMARKETCAP_API_KEY which you can also get for free from coinmarketcap. Once you have installed all dependancies ```yarn install``` or ```npm i```, you can run the script locally with ```yarn hardhat deploy```.
 
   ## Usage
 

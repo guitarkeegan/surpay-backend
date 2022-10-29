@@ -1,7 +1,7 @@
 const {assert, expect} = require("chai");
 const {getNamedAccounts, deployments, ethers, network} = require("hardhat");
 const {developmentChains, networkConfig} = require("../../helpers.hardhat-config");
-
+// check if current chain is hardhat or localhost
 !developmentChains.includes(network.name)
     ?
     describe.skip
@@ -82,7 +82,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             });
         })
         describe("checkUpkeep", function(){
-
+            // create a new survey and fund
             beforeEach(async function(){
                 console.log("creating survey...")
                 await surpay.createSurvey(
@@ -147,22 +147,27 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await network.provider.send("evm_mine", []);
             });
 
-            it("should send funds to all survey takers", async function(){
+            it("should send funds to all survey takers, survey taker's wallet balance should be bigger than before", async function(){
                 // will need to mimic chainlink automation for this part
                 //get start time stamp from survey struct
                 
                 await new Promise( async (reject, resolve) => {
-                    surpay.once("SurveyCreated", async ()=>{
-                        console.log("New survey event has fired!");
+                    surpay.once("SurveyCompleted", async ()=>{
+                        console.log("Survey completed event has fired!");
                         try {
-                            console.log("hi")
-                        } catch {
-                            console.log("yo")
+                            const joeEndingBalance = await accounts[1].getBalance();
+                            const maryEndingBalance = await accounts[2].getBalance();
+                            assert(joeEndingBalance > joeStartingBalance);
+                            assert(maryEndingBalance > maryStartingBalance);
+                            resolve();
+                        } catch (e) {
+                            reject(e);
                         }
                     });
                     // kicking off the event by mocking the chainlink automation
                     const tx = await surpay.performUpkeep("0x");
                     const txReceipt = await tx.wait(1);
+                    // console.log(txReceipt)
                     const joeStartingBalance = await accounts[1].getBalance();
                     const maryStartingBalance = await accounts[2].getBalance();
 

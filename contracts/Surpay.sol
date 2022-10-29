@@ -66,7 +66,7 @@ contract Surpay is AutomationCompatibleInterface{
     /* events */
     event SurveyCreated(string indexed surveyId);
     event UserAddedToSurvey(address indexed surveyTaker);
-    event SurveyCompleted(string indexed surveyData);
+    event SurveyCompleted(string indexed surveyId);
     event SurveyTakersPaid(string indexed surveyId);
     
 
@@ -136,6 +136,7 @@ contract Surpay is AutomationCompatibleInterface{
                     // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED
                     if (s_surveys[i].numOfParticipantsDesired == s_surveys[i].numOfParticipantsFulfilled) {
                         s_surveys[i].surveyState = SurveyState.COMPLETED;
+                        emit SurveyCompleted(s_surveys[i].surveyId);
                     }
 
                     emit UserAddedToSurvey(msg.sender);
@@ -148,7 +149,9 @@ contract Surpay is AutomationCompatibleInterface{
         }
 
     }
-
+    /**
+     * @dev The index of s_completeSurveys is passed in from performUpkeep().
+     */
     function distributeFundsFromCompletedSurvey(uint256 index) internal {
         // copy state variable to local varable for payout itteration
         Survey[] memory completedSurveys = s_completeSurveys;
@@ -157,7 +160,7 @@ contract Surpay is AutomationCompatibleInterface{
         uint256 ethToPay;
 
         ethToPay = completedSurveys[index].totalPayoutAmount / completedSurveys[index].numOfParticipantsFulfilled;        
-
+        
         for(uint256 i=0;i<completedSurveys[index].surveyTakers.length;i++){
             if (ethToPay < address(this).balance){
                 (bool success, ) = completedSurveys[index].surveyTakers[i].call{value: ethToPay}("");
