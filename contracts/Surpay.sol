@@ -28,7 +28,7 @@ contract Surpay is AutomationCompatibleInterface{
      */
     // TODO: may need to refactor with mapping of (surveyID: Survey)
     struct Survey{
-        string surveyId;
+        
         string companyId;
         address companyAddress;
         uint256 totalPayoutAmount;
@@ -50,8 +50,8 @@ contract Surpay is AutomationCompatibleInterface{
     }
     
     /* state variables  */
-    Survey[] private s_surveys;
-    Survey[] private s_completeSurveys;
+    mapping (string=>Survey) s_surveys;
+    string[] private s_completedSurveys;
     // uint256[] private s_surveysToDelete;
     uint256 private immutable i_surveyCreationFee;
 
@@ -77,10 +77,10 @@ contract Surpay is AutomationCompatibleInterface{
         (bool upkeepNeeded, ) = checkUpkeep("");
         // logic for what should happen if upkeepNeeded is true
         if (upkeepNeeded) {
-            Survey[] memory completedSurveys = s_completeSurveys;
+            string[] memory completedSurveys = s_completedSurveys;
             for (uint256 i=0;i<completedSurveys.length;i++){
             distributeFundsFromCompletedSurvey(i);
-            emit SurveyTakersPaid(completedSurveys[i].surveyId);
+            emit SurveyTakersPaid(completedSurveys[i]);
         }
         // clean up completed surveys
         }
@@ -88,19 +88,11 @@ contract Surpay is AutomationCompatibleInterface{
 
     function checkUpkeep(bytes memory /* checkData */) public returns (bool upkeepNeeded, bytes memory /* performData */){
         // conditions for automation to be performed
-        Survey[] memory allSurveys = s_surveys;
-        for (uint256 i=0;i<allSurveys.length;i++){
-            if (allSurveys[i].surveyState == SurveyState.COMPLETED){
-                s_completeSurveys.push(allSurveys[i]);
-                // s_surveysToDelete.push(i);
-            }
-        }
-        if (s_completeSurveys.length > 0){
+        if (s_completedSurveys.length > 0){
             upkeepNeeded = true;
         } else {
             upkeepNeeded = false;
         }
-
     }
 
     function createSurvey(
@@ -115,78 +107,70 @@ contract Surpay is AutomationCompatibleInterface{
             // TODO: validate that fields are not empty
 
             Survey memory newSurvey;
-            newSurvey.surveyId = _surveyId;
             newSurvey.companyId = _companyId;
             newSurvey.companyAddress = msg.sender;
             newSurvey.totalPayoutAmount = _totalPayoutAmount;
             newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;
             newSurvey.startTimeStamp = block.timestamp;
             newSurvey.surveyState = SurveyState.OPEN;
-            s_surveys.push(newSurvey);
+
+            s_surveys[_surveyId] = newSurvey;
             emit SurveyCreated(_surveyId);
     }
 
     function sendUserSurveyData(string memory _surveyId, string memory _surveyData) public {
-        // get the survey by id
-        for (uint256 i=0;i<s_surveys.length;i++){
-            if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
-
-                if (s_surveys[i].numOfParticipantsDesired > s_surveys[i].numOfParticipantsFulfilled) {
-                    // store the user address, store survey data in Survey object
-                    s_surveys[i].surveyResponseData.push(_surveyData);
-                    s_surveys[i].surveyTakers.push(payable(msg.sender));
-                    s_surveys[i].numOfParticipantsFulfilled++;
-                    // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED
-                    if (s_surveys[i].numOfParticipantsDesired == s_surveys[i].numOfParticipantsFulfilled) {
-                        s_surveys[i].surveyState = SurveyState.COMPLETED;
-                        emit SurveyCompleted(s_surveys[i].surveyId);
-                    }
-
-                    emit UserAddedToSurvey(msg.sender);
-                    break;
-
-                } else {
-                    revert Surpay__MaximumRespondantsReached();
-                }
+        
+        if (s_surveys[_surveyId].numOfParticipantsDesired > s_surveys[_surveyId].numOfParticipantsFulfilled) {
+            // store the user address, store survey data in Survey object
+            s_surveys[_surveyId].surveyResponseData.push(_surveyData);
+            s_surveys[_surveyId].surveyTakers.push(payable(msg.sender));
+            s_surveys[_surveyId].numOfParticipantsFulfilled++;
+            // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED. Add to completedSurveys array. 
+            if (s_surveys[_surveyId].numOfParticipantsDesired == s_surveys[_surveyId].numOfParticipantsFulfilled) {
+                s_surveys[_surveyId].surveyState = SurveyState.COMPLETED;
+                s_completedSurveys.push(_surveyId);
+                emit SurveyCompleted(_surveyId);
             }
-        }
 
+            emit UserAddedToSurvey(msg.sender);
+            
+
+        } else {
+            revert Surpay__MaximumRespondantsReached();
+        }
     }
+    
     /**
      * @dev The index of s_completeSurveys is passed in from performUpkeep().
      */
     function distributeFundsFromCompletedSurvey(uint256 index) internal {
         // copy state variable to local varable for payout itteration
-        Survey[] memory completedSurveys = s_completeSurveys;
+        string[] memory completedSurveys = s_completedSurveys;
         // 16 zeros for 0.01 eth
         // total payout amount is divided between the number of participants
         uint256 ethToPay;
 
-        ethToPay = completedSurveys[index].totalPayoutAmount / completedSurveys[index].numOfParticipantsFulfilled;        
+        ethToPay = s_surveys[completedSurveys[index]].totalPayoutAmount / s_surveys[completedSurveys[index]].numOfParticipantsFulfilled;        
 
-        for(uint256 i=0;i<completedSurveys[index].surveyTakers.length;i++){
+        for(uint256 i=0;i<s_surveys[completedSurveys[index]].surveyTakers.length;i++){
             if (ethToPay < address(this).balance){
-                (bool success, ) = completedSurveys[index].surveyTakers[i].call{value: ethToPay}("");
+                (bool success, ) = s_surveys[completedSurveys[index]].surveyTakers[i].call{value: ethToPay}("");
                 if (!success){
                     revert Surpay__TransferFailed();
                 }
             }
         }
-        // clear completed surveys array
-        // s_completeSurveys = new Survey[](0);
-
     }
 
     /* view/pure functions  */
 
     function getSurveyState(string memory _surveyId) public view returns(SurveyState){
-        SurveyState currentState;
-        for(uint256 i=0;i<s_surveys.length;i++){
-            if (keccak256(abi.encodePacked(s_surveys[i].surveyId)) == keccak256(abi.encodePacked(_surveyId))){
-                currentState = s_surveys[i].surveyState;
-            }
+        if (s_surveys[_surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[_surveyId].surveyState;
+        } else {
+            revert Surpay__SurveyNotFound();
         }
-        return currentState;
+        
     }
 
     function getSurveyCreationFee() public view returns(uint256) {
@@ -197,46 +181,59 @@ contract Surpay is AutomationCompatibleInterface{
         return i_interval;
     }
 
-    function getSurveyByIndex(uint256 index) public view returns(string memory) {
-
-        if (index < s_surveys.length){
-            return s_surveys[index].surveyId;
-        } else {
-            revert Surpay__SurveyNotFound();
-        }
+    function getCompanyId(string memory surveyId) public view returns(string memory){
+        return s_surveys[surveyId].companyId;
     }
+    // change test
+    // function getSurvey(uint256 surveyId) public view returns(string memory) {
 
-    function getPayoutByIndex(uint256 index) public view returns(uint256){
-         if (index < s_surveys.length){
-            return s_surveys[index].totalPayoutAmount;
-        } else {
-            revert Surpay__SurveyNotFound();
-        }
-    }
-
-    function getSurveyTakerByIndex(uint256 surveyIndex, uint256 userIndex) public view returns(address){
-        // add the address of a survey taker
-        return s_surveys[surveyIndex].surveyTakers[userIndex];
-    }
-
-    function getSurveyResponseDataByIndex(uint256 surveyIndex, uint256 responseIndex) public view returns(string memory){
-        return s_surveys[surveyIndex].surveyResponseData[responseIndex];
-    }
-
-    function getLastTimeStampBySurveyIndex(uint256 surveyIndex) public view returns(uint256){
-        return s_surveys[surveyIndex].startTimeStamp;
-    }
-
-    function getPayoutPerPersonBySurveyIndex(uint256 surveyIndex) public view returns(uint256){
-        return s_surveys[surveyIndex].totalPayoutAmount / s_surveys[surveyIndex].numOfParticipantsDesired;
-    }
-
-    // function removeConcludedSurveys() public {
-    //     s_completeSurveys = [](0);
+    //     if (index < s_surveys.length){
+    //         return s_surveys[index].surveyId;
+    //     } else {
+    //         revert Surpay__SurveyNotFound();
+    //     }
     // }
-    
-    // function submitUserSurveyData(){}
-   
 
+    function getSurveyPayoutAmount(string memory _surveyId) public view returns(uint256){
+        if (s_surveys[_surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[_surveyId].totalPayoutAmount;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+    }
 
+    function getSurveyTaker(string memory surveyId, uint256 userIndex) public view returns(address){
+        // add the address of a survey taker
+        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[surveyId].surveyTakers[userIndex];
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+        
+    }
+
+    function getSurveyResponseData(string memory surveyId, uint256 responseIndex) public view returns(string memory){
+        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[surveyId].surveyResponseData[responseIndex];
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+        
+    }
+
+    function getLastTimeStamp(string memory surveyId) public view returns(uint256){
+        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[surveyId].startTimeStamp;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+    }
+
+    function getPayoutPerPersonBySurveyId(string memory surveyId) public view returns(uint256){
+        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
+            return s_surveys[surveyId].totalPayoutAmount / s_surveys[surveyId].numOfParticipantsDesired;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
+    }
 }

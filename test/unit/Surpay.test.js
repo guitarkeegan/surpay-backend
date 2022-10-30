@@ -31,7 +31,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
 
         describe("createSurvey", function(){
 
-            it("should create a new survey and store it to surveys", async function(){
+            it("should create a new survey and store it to s_surveys, companyId should match the amount passed in createSurvey", async function(){
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
@@ -39,8 +39,8 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
-                const createdSurveyId = await surpay.getSurveyByIndex(0);
-                assert.equal(createdSurveyId.toString(), "1");
+                const companyId = await surpay.getCompanyId(networkConfig[chainId]["companyId"][0]);
+                assert.equal(companyId, networkConfig[chainId]["companyId"][0]);
             });
             it("should emit a survey created event", async function(){
                 await expect(surpay.createSurvey(
@@ -73,9 +73,9 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["surveyResponseData"][0]
                 );
                 // params: s_surveys index, Survey.surveyTakers[0]
-                // there should be a Survey object at 0 with 1 user in surveyTakers at index 0
-                const surveyTakerAddress = await surpay.getSurveyTakerByIndex(0, 0);
-                const surveyResponseData = await surpay.getSurveyResponseDataByIndex(0, 0);
+                // there should be a Survey id of 1 with 1 user in surveyTakers at index 0
+                const surveyTakerAddress = await surpay.getSurveyTaker("1", 0);
+                const surveyResponseData = await surpay.getSurveyResponseData("1", 0);
                 assert.equal(surveyTakerAddress, accounts[1].address);
                 // user data should match the data that was passed in.
                 assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
@@ -130,7 +130,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
-                startTimeStamp = await surpay.getLastTimeStampBySurveyIndex(0);
+                startTimeStamp = await surpay.getLastTimeStamp(networkConfig[chainId]["surveyId"][0]);
                 const accounts = await ethers.getSigners();
                 const account1ConnectedSurpay = surpay.connect(accounts[1]);
                 const account2ConnectedSurpay = surpay.connect(accounts[2]);
@@ -159,7 +159,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                             const maryEndingBalance = await accounts[2].getBalance();
                             assert(joeEndingBalance > joeStartingBalance);
                             assert(maryEndingBalance > maryStartingBalance);
-                            assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyIndex(0)));
+                            assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyId("1")));
                             resolve();
                         } catch (e) {
                             reject(e);
