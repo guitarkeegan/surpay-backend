@@ -160,6 +160,14 @@ contract Surpay is AutomationCompatibleInterface{
                 }
             }
         }
+        removeCompletedSurveys();
+    }
+
+    function removeCompletedSurveys() public {
+        string[] memory completedSurveys = s_completedSurveys;
+        for(uint256 i=0;i<completedSurveys.length;i++){
+            delete(s_surveys[completedSurveys[i]]);
+        }
     }
 
     /* view/pure functions  */
@@ -184,15 +192,6 @@ contract Surpay is AutomationCompatibleInterface{
     function getCompanyId(string memory surveyId) public view returns(string memory){
         return s_surveys[surveyId].companyId;
     }
-    // change test
-    // function getSurvey(uint256 surveyId) public view returns(string memory) {
-
-    //     if (index < s_surveys.length){
-    //         return s_surveys[index].surveyId;
-    //     } else {
-    //         revert Surpay__SurveyNotFound();
-    //     }
-    // }
 
     function getSurveyPayoutAmount(string memory _surveyId) public view returns(uint256){
         if (s_surveys[_surveyId].numOfParticipantsDesired > 0){
