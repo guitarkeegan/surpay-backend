@@ -160,6 +160,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                             assert(joeEndingBalance > joeStartingBalance);
                             assert(maryEndingBalance > maryStartingBalance);
                             assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyId("1")));
+                            await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
                             resolve();
                         } catch (e) {
                             reject(e);
