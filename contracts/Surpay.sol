@@ -18,6 +18,7 @@ error Surpay__MissingRequiredFields();
 error Surpay__TransferFailed();
 error Surpay__SurveyNotFound();
 error Surpay__MaximumRespondantsReached();
+error Surpay__NotOwner();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -40,9 +41,7 @@ contract Surpay is AutomationCompatibleInterface{
         SurveyState surveyState;
     }
     /**
-     * @dev Each survey struct has a state field. When the survey is created * and funded, it is OPEN. After the survey has been completed with the *  numOfParticipantsFullfilled, the survey changes to COMPLETED. 
-     * After the suvey takers have been paid, the survey is marked CONCLUDED,
-     * and is marked for deletion. 
+     * TODO: possibly no long need survey state here.
      */
     enum SurveyState{
         OPEN,
@@ -50,6 +49,7 @@ contract Surpay is AutomationCompatibleInterface{
     }
     
     /* state variables  */
+    address i_owner;
     mapping (string=>Survey) s_surveys;
     string[] private s_completedSurveys;
     // uint256[] private s_surveysToDelete;
@@ -58,9 +58,15 @@ contract Surpay is AutomationCompatibleInterface{
     /* survey variables  */
     uint256 private immutable i_interval;
 
+    /* modifiers */
+    modifier onlyOwner(){
+        if (msg.sender != i_owner) revert Surpay__NotOwner();
+        _;
+    }
+
     /* constructor */
     constructor(uint256 _surveyCreationFee, uint256 _interval){
-        
+        i_owner = msg.sender;
         i_surveyCreationFee = _surveyCreationFee;
         i_interval = _interval;
     }
@@ -118,12 +124,12 @@ contract Surpay is AutomationCompatibleInterface{
             emit SurveyCreated(_surveyId);
     }
 
-    function sendUserSurveyData(string memory _surveyId, string memory _surveyData) public {
+    function sendUserSurveyData(string memory _surveyId, string memory _surveyData, address userAddress) public onlyOwner {
         
         if (s_surveys[_surveyId].numOfParticipantsDesired > s_surveys[_surveyId].numOfParticipantsFulfilled) {
             // store the user address, store survey data in Survey object
             s_surveys[_surveyId].surveyResponseData.push(_surveyData);
-            s_surveys[_surveyId].surveyTakers.push(payable(msg.sender));
+            s_surveys[_surveyId].surveyTakers.push(payable(userAddress));
             s_surveys[_surveyId].numOfParticipantsFulfilled++;
             // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED. Add to completedSurveys array. 
             if (s_surveys[_surveyId].numOfParticipantsDesired == s_surveys[_surveyId].numOfParticipantsFulfilled) {
@@ -132,7 +138,7 @@ contract Surpay is AutomationCompatibleInterface{
                 emit SurveyCompleted(_surveyId);
             }
 
-            emit UserAddedToSurvey(msg.sender);
+            emit UserAddedToSurvey(userAddress);
             
 
         } else {
@@ -171,6 +177,10 @@ contract Surpay is AutomationCompatibleInterface{
     }
 
     /* view/pure functions  */
+
+    function getOwner() public view returns(address){
+        return i_owner;
+    }
 
     function getSurveyState(string memory _surveyId) public view returns(SurveyState){
         if (s_surveys[_surveyId].numOfParticipantsDesired > 0){
