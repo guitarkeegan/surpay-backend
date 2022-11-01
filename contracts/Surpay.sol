@@ -7,7 +7,8 @@ pragma solidity ^0.8.8;
  * @author Keegan Anglim and Alan Abed
  * @notice This contract is meant to be a demo and should not be used
  * in production
- * 
+ * @notice The purpose of this contract is to facilitate a transaction
+ * of user data and funds.
  */
 
 // import AutomationCompatibleInterface
@@ -27,7 +28,6 @@ contract Surpay is AutomationCompatibleInterface{
     /**
      * @dev Survey will hold the survey ID as well as a mapping for each user address and response data for the survey.
      */
-    // TODO: may need to refactor with mapping of (surveyID: Survey)
     struct Survey{
         
         string companyId;
@@ -41,7 +41,9 @@ contract Surpay is AutomationCompatibleInterface{
         SurveyState surveyState;
     }
     /**
-     * TODO: possibly no long need survey state here.
+     * @dev The survey state was needed in an ealier version of the contract
+     * @dev We are leaving it in, because a get state function is used in 
+     * @dev one of our unit tests.
      */
     enum SurveyState{
         OPEN,
@@ -52,7 +54,6 @@ contract Surpay is AutomationCompatibleInterface{
     address i_owner;
     mapping (string=>Survey) s_surveys;
     string[] private s_completedSurveys;
-    // uint256[] private s_surveysToDelete;
     uint256 private immutable i_surveyCreationFee;
 
     /* survey variables  */
@@ -88,7 +89,7 @@ contract Surpay is AutomationCompatibleInterface{
             distributeFundsFromCompletedSurvey(i);
             emit SurveyTakersPaid(completedSurveys[i]);
         }
-        // clean up completed surveys
+        
         }
     }
 
@@ -110,8 +111,7 @@ contract Surpay is AutomationCompatibleInterface{
             if (msg.value < i_surveyCreationFee){
                 revert Surpay__NotEnoughFunds();
             }
-            // TODO: validate that fields are not empty
-
+  
             Survey memory newSurvey;
             newSurvey.companyId = _companyId;
             newSurvey.companyAddress = msg.sender;

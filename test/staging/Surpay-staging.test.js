@@ -13,6 +13,32 @@ developmentChains.includes(network.name)
             surveyCreationFee = await surpay.getSurveyCreationFee();
         });
         describe("distributeFundsFromCompletedSurvey", function(){
-            it("works with Chainlink automation")
+            it("works with Chainlink automation, we create a survey, submit 2 user's data, payout to the two users", async function(){
+                
+                await new Promise( async (reject, resolve) => {
+                    surpay.once("SurveyCompleted", async ()=>{
+                        console.log("Survey completed event has fired!");
+                        try {
+                            const joeEndingBalance = await accounts[1].getBalance();
+                            const maryEndingBalance = await accounts[2].getBalance();
+                            assert(joeEndingBalance > joeStartingBalance);
+                            assert(maryEndingBalance > maryStartingBalance);
+                            assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyId("1")));
+                            await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
+                            
+                            resolve();
+                        } catch (e) {
+                            reject(e);
+                        }
+                    });
+                    // kicking off the event by mocking the chainlink automation
+                    const tx = await surpay.performUpkeep("0x");
+                    const txReceipt = await tx.wait(1);
+                    // console.log(txReceipt)
+                    const joeStartingBalance = await accounts[1].getBalance();
+                    const maryStartingBalance = await accounts[2].getBalance();
+
+                });
+            })
         })
     })

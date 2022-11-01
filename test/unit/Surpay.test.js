@@ -89,6 +89,15 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 // user data should match the data that was passed in.
                 assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
             });
+            it("should revert if anyone other than the user tries to call the function", async function(){
+                const accounts = await ethers.getSigners();
+                const userAccountConnected = surpay.connect(accounts[1]);
+                expect(userAccountConnected.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["surveyResponseData"][0],
+                    accounts[1].address)
+                ).to.be.revertedWith("Surpay__NotOwner");
+            })
         })
         describe("checkUpkeep", function(){
             // create a new survey and fund
