@@ -11,7 +11,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
 
         beforeEach(async function(){
             deployer = (await getNamedAccounts()).deployer;
-            console.log("Deploying contract...")
+            // console.log("Deploying contract...")
             await deployments.fixture(["all"]);
             surpay = await ethers.getContract("Surpay", deployer);
             surveyCreationFee = await surpay.getSurveyCreationFee();
@@ -56,6 +56,11 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     )).to.emit(surpay, "SurveyCreated");
             });
         });
+        describe("performUpkeep", function(){
+            it("reverts when checkUpkeep is false", async function(){
+                expect(surpay.performUpkeep([])).to.be.revertedWith("Surpay__UpkeepNotNeeded");
+            })
+        })
         describe("sendUserSurveyData", function(){
             console.log("creating survey...")
             beforeEach(async function(){
@@ -85,6 +90,11 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 // there should be a Survey id of 1 with 1 user in surveyTakers at index 0
                 const surveyTakerAddress = await surpay.getSurveyTaker("1", 0);
                 const surveyResponseData = await surpay.getSurveyResponseData("1", 0);
+
+                // returns an array of one string
+                const surveyData = await surpay.getAllSurveyResponseData("1");
+                console.log(surveyData);
+
                 assert.equal(surveyTakerAddress, accounts[1].address);
                 // user data should match the data that was passed in.
                 assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
@@ -182,7 +192,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                             assert(joeEndingBalance > joeStartingBalance);
                             assert(maryEndingBalance > maryStartingBalance);
                             assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyId("1")));
-                            await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
+                            // await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
                             
                             resolve();
                         } catch (e) {

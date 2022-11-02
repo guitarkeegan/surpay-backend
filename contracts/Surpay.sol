@@ -7,11 +7,10 @@ pragma solidity ^0.8.8;
  * @author Keegan Anglim and Alan Abed
  * @notice This contract is meant to be a demo and should not be used
  * in production
- * @notice The purpose of this contract is to facilitate a transaction
- * of user data and funds.
+ * @notice The purpose of this contract is to facilitate an exchange
+ * of survey data for funds.
  */
 
-// import AutomationCompatibleInterface
 import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 error Surpay__NotEnoughFunds();
@@ -20,6 +19,7 @@ error Surpay__TransferFailed();
 error Surpay__SurveyNotFound();
 error Surpay__MaximumRespondantsReached();
 error Surpay__NotOwner();
+error Surpay__UpkeepNotNeeded();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -88,8 +88,9 @@ contract Surpay is AutomationCompatibleInterface{
             for (uint256 i=0;i<completedSurveys.length;i++){
             distributeFundsFromCompletedSurvey(i);
             emit SurveyTakersPaid(completedSurveys[i]);
-        }
-        
+        } 
+        } else {
+            revert Surpay__UpkeepNotNeeded();
         }
     }
 
@@ -123,7 +124,11 @@ contract Surpay is AutomationCompatibleInterface{
             s_surveys[_surveyId] = newSurvey;
             emit SurveyCreated(_surveyId);
     }
-
+    /**
+     * @notice Function can only be called by the contract owner.
+     * @notice This was neccissary to ensure that the user data was
+     * @notice a valid response to the survey.
+     */
     function sendUserSurveyData(string memory _surveyId, string memory _surveyData, address userAddress) public onlyOwner {
         
         if (s_surveys[_surveyId].numOfParticipantsDesired > s_surveys[_surveyId].numOfParticipantsFulfilled) {
@@ -149,7 +154,7 @@ contract Surpay is AutomationCompatibleInterface{
     /**
      * @dev The index of s_completeSurveys is passed in from performUpkeep().
      */
-    function distributeFundsFromCompletedSurvey(uint256 index) internal {
+    function distributeFundsFromCompletedSurvey(uint256 index) public {
         // copy state variable to local varable for payout itteration
         string[] memory completedSurveys = s_completedSurveys;
         // 16 zeros for 0.01 eth
@@ -166,10 +171,10 @@ contract Surpay is AutomationCompatibleInterface{
                 }
             }
         }
-        removeCompletedSurveys();
+        
     }
 
-    function removeCompletedSurveys() public {
+    function removeCompletedSurveys() public onlyOwner {
         string[] memory completedSurveys = s_completedSurveys;
         for(uint256 i=0;i<completedSurveys.length;i++){
             delete(s_surveys[completedSurveys[i]]);
@@ -219,6 +224,14 @@ contract Surpay is AutomationCompatibleInterface{
             revert Surpay__SurveyNotFound();
         }
         
+    }
+    
+    function getAllSurveyResponseData(string memory surveyId) public view returns(string[] memory){
+        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
+            return  s_surveys[surveyId].surveyResponseData;
+        } else {
+            revert Surpay__SurveyNotFound();
+        }
     }
 
     function getSurveyResponseData(string memory surveyId, uint256 responseIndex) public view returns(string memory){
