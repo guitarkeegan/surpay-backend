@@ -73,14 +73,9 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     );
             })
 
-            it("should add a survey response and user address to Survey object", async function(){
+            it("should add a survey response and user address to Survey object, should also return the response date when called", async function(){
                 const accounts = await ethers.getSigners();
-                // const accountConnectedSurpay = surpay.connect(accounts[1]);
-
-                // await accountConnectedSurpay.sendUserSurveyData(
-                //     networkConfig[chainId]["surveyId"][0],
-                //     networkConfig[chainId]["surveyResponseData"][0]
-                // );
+ 
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["surveyResponseData"][0],
@@ -93,7 +88,8 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
 
                 // returns an array of one string
                 const surveyData = await surpay.getAllSurveyResponseData("1");
-                console.log(surveyData);
+                assert.equal(typeof surveyData[0], typeof "string")
+                // console.log(surveyData);
 
                 assert.equal(surveyTakerAddress, accounts[1].address);
                 // user data should match the data that was passed in.
@@ -107,6 +103,23 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     networkConfig[chainId]["surveyResponseData"][0],
                     accounts[1].address)
                 ).to.be.revertedWith("Surpay__NotOwner");
+            })
+            it("should revert if too many users are added to the survey", async function(){
+                const accounts = await ethers.getSigners();
+
+                for (let i=1;i<3;i++){
+                    await surpay.sendUserSurveyData(
+                        networkConfig[chainId]["surveyId"][0],
+                        networkConfig[chainId]["surveyResponseData"][0],
+                        accounts[i].address
+                    )
+                }
+
+                await expect(surpay.sendUserSurveyData(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["surveyResponseData"][0],
+                    accounts[3].address
+                )).to.be.revertedWith("Surpay__MaximumRespondantsReached")
             })
         })
         describe("checkUpkeep", function(){
@@ -129,8 +142,6 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             it("returns true if the desired number of survey takers has been fulfilled", async function(){
 
                 const accounts = await ethers.getSigners();
-                // const account1ConnectedSurpay = surpay.connect(accounts[1]);
-                // const account2ConnectedSurpay = surpay.connect(accounts[2]);
                 
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
@@ -179,7 +190,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await network.provider.send("evm_mine", []);
             });
 
-            it("should send funds to all survey takers, survey taker's wallet balance should be equal to the projected payout amout", async function(){
+            it("should send funds to all survey takers, survey taker's wallet balance should be equal to the projected payout amout, should also remove completed surveys", async function(){
                 // will need to mimic chainlink automation for this part
                 //get start time stamp from survey struct
                 
@@ -192,8 +203,8 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                             assert(joeEndingBalance > joeStartingBalance);
                             assert(maryEndingBalance > maryStartingBalance);
                             assert.equal(joeEndingBalance, joeStartingBalance.add(await surpay.getPayoutPerPersonBySurveyId("1")));
-                            // await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
-                            
+                            await surpay.removeCompletedSurveys()
+                            await expect(getSurveyState("1")).to.be.revertedWith("Surpay__SurveyNotFound");
                             resolve();
                         } catch (e) {
                             reject(e);

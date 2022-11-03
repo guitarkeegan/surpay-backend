@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/KeeganLaptop/chainlink-bootcamp/surpay-backend/contracts/Surpay.sol": {
-      "lastModificationDate": 1667366925532,
+      "lastModificationDate": 1667435386289,
       "contentHash": "08bba70381ba6517204455513a3ab51e",
       "sourceName": "contracts/Surpay.sol",
       "solcConfig": {
@@ -31,7 +31,7 @@
             }
           },
           "metadata": {
-            "useLiteralContent": true
+            "useLiteralContent": false
           }
         }
       },
@@ -75,7 +75,7 @@
             }
           },
           "metadata": {
-            "useLiteralContent": true
+            "useLiteralContent": false
           }
         }
       },
