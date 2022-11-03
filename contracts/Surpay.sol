@@ -212,6 +212,7 @@ contract Surpay is AutomationCompatibleInterface{
         } else {
             (bool success, ) = i_owner.call{value: amount}("");
             if (success){
+                s_feeHolder -= amount;
                 emit FundsWithdrawn(amount);
             } else {
                 revert Surpay__TransferFailed();
@@ -239,6 +240,10 @@ contract Surpay is AutomationCompatibleInterface{
             revert Surpay__SurveyNotFound();
         }
         
+    }
+
+    function getFeeHolderAmount() public view returns(uint256){
+        return s_feeHolder;
     }
 
     function getSurveyCreationFee() public view returns(uint256) {

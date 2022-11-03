@@ -55,7 +55,45 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     )).to.emit(surpay, "SurveyCreated");
             });
+            it("should tranfer the surveyCreationFee to the feeHolder", async function(){
+                await surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["payout"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    );
+                const feeHolderAmount = await surpay.getFeeHolderAmount();
+                const surveyCreationFee = await surpay.getSurveyCreationFee();
+                assert.equal(feeHolderAmount.toString(), surveyCreationFee.toString());
+            })
         });
+        describe("withdrawFromFeeHolder", function(){
+            beforeEach(async function(){
+                await surpay.createSurvey(
+                    networkConfig[chainId]["surveyId"][0],
+                    networkConfig[chainId]["companyId"][0],
+                    networkConfig[chainId]["payout"],
+                    networkConfig[chainId]["numOfParticipantsDesired"],
+                    {value: networkConfig[chainId]["totalPayoutAmount"]}
+                    );
+            });
+            it("reverts if the owner tries to withdraw too much", async function(){
+                await expect(surpay.withdrawFromFeeHolder(ethers.utils.parseEther("1.0"))).to.be.revertedWith("Surpay__NotEnoughFunds");
+            });
+            it("allows the owner to withdraw funds if less than the total amount in feeHolder and updates the total in feeHolder", async function(){
+                const amountBefore = await surpay.getFeeHolderAmount();
+                const amountWithdrawn = await surpay.withdrawFromFeeHolder(ethers.utils.parseEther("0.005"));
+                const amountRemaining = await surpay.getFeeHolderAmount();
+                assert(amountWithdrawn);
+                assert(amountRemaining.toString() != amountBefore.toString());
+            });
+            it("reverts if anyone other than the owner attempts to withdraw funds", async function(){
+                const accounts = await ethers.getSigners();
+                const randomUser = surpay.connect(accounts[1]);
+                await expect(randomUser.withdrawFromFeeHolder(ethers.utils.parseEther("0.005"))).to.be.revertedWith("Surpay__NotOwner");
+            })
+        })
         describe("performUpkeep", function(){
             it("reverts when checkUpkeep is false", async function(){
                 expect(surpay.performUpkeep([])).to.be.revertedWith("Surpay__UpkeepNotNeeded");
