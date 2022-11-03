@@ -39,7 +39,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
-                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["payout"],
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
@@ -50,7 +50,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await expect(surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
-                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["payout"],
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     )).to.emit(surpay, "SurveyCreated");
@@ -67,7 +67,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
-                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["payout"],
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
@@ -129,7 +129,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
-                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["payout"],
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );
@@ -167,7 +167,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 await surpay.createSurvey(
                     networkConfig[chainId]["surveyId"][0],
                     networkConfig[chainId]["companyId"][0],
-                    networkConfig[chainId]["totalPayoutAmount"],
+                    networkConfig[chainId]["payout"],
                     networkConfig[chainId]["numOfParticipantsDesired"],
                     {value: networkConfig[chainId]["totalPayoutAmount"]}
                     );

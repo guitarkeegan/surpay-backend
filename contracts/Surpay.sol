@@ -20,6 +20,7 @@ error Surpay__SurveyNotFound();
 error Surpay__MaximumRespondantsReached();
 error Surpay__NotOwner();
 error Surpay__UpkeepNotNeeded();
+error Surpay__SurveyAlreadyConcluded();
 
 contract Surpay is AutomationCompatibleInterface{
 
@@ -47,14 +48,22 @@ contract Surpay is AutomationCompatibleInterface{
      */
     enum SurveyState{
         OPEN,
-        COMPLETED
+        COMPLETED,
+        PAID
     }
     
     /* state variables  */
+    /**
+     * @dev s_surveys holds all survey data, with the surveyId as the key. 
+     * @dev completed surveys stors the surveyIds for all completed surveys
+     * @dev The surveyCreationFee is required for all new surveys.
+     * @dev The surveyCreationFee is for tx fees and revenue for the service
+     */
     address i_owner;
     mapping (string=>Survey) s_surveys;
     string[] private s_completedSurveys;
     uint256 private immutable i_surveyCreationFee;
+    uint256 private s_feeHolder;
 
     /* survey variables  */
     uint256 private immutable i_interval;
@@ -77,9 +86,14 @@ contract Surpay is AutomationCompatibleInterface{
     event UserAddedToSurvey(address indexed surveyTaker);
     event SurveyCompleted(string indexed surveyId);
     event SurveyTakersPaid(string indexed surveyId);
+    event FundsWithdrawn(uint256 indexed amount);
     
 
     /* functions */
+    /**
+     * @dev chainlink automation. perform upkeep fires if checkUpkeep returns
+     * @dev true.
+     */
     function performUpkeep(bytes calldata /* performData */) external override{
         (bool upkeepNeeded, ) = checkUpkeep("");
         // logic for what should happen if upkeepNeeded is true
@@ -93,7 +107,9 @@ contract Surpay is AutomationCompatibleInterface{
             revert Surpay__UpkeepNotNeeded();
         }
     }
-
+    /**
+     * @dev Returns true only if there are any complete surveys.
+     */
     function checkUpkeep(bytes memory /* checkData */) public returns (bool upkeepNeeded, bytes memory /* performData */){
         // conditions for automation to be performed
         if (s_completedSurveys.length > 0){
@@ -102,16 +118,22 @@ contract Surpay is AutomationCompatibleInterface{
             upkeepNeeded = false;
         }
     }
-
+    /**
+     * @dev A survey can be created by anyone, but it must be called
+     * @dev with both the total payout amount and the survey creation
+     * @dev fee. The current fee is 0.01 ETH. 
+     */
     function createSurvey(
         string memory _surveyId,
         string memory _companyId, 
         uint256 _totalPayoutAmount, 
         uint256 _numOfParticipantsDesired
         ) public payable {
-            if (msg.value < i_surveyCreationFee){
+            if (msg.value < i_surveyCreationFee + _totalPayoutAmount){
                 revert Surpay__NotEnoughFunds();
             }
+
+            s_feeHolder += i_surveyCreationFee;
   
             Survey memory newSurvey;
             newSurvey.companyId = _companyId;
@@ -120,7 +142,7 @@ contract Surpay is AutomationCompatibleInterface{
             newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;
             newSurvey.startTimeStamp = block.timestamp;
             newSurvey.surveyState = SurveyState.OPEN;
-
+            
             s_surveys[_surveyId] = newSurvey;
             emit SurveyCreated(_surveyId);
     }
@@ -128,6 +150,8 @@ contract Surpay is AutomationCompatibleInterface{
      * @notice Function can only be called by the contract owner.
      * @notice This was neccissary to ensure that the user data was
      * @notice a valid response to the survey.
+     * 
+     * @dev The SurveyCompleted event is the event listener
      */
     function sendUserSurveyData(string memory _surveyId, string memory _surveyData, address userAddress) public onlyOwner {
         
@@ -140,6 +164,7 @@ contract Surpay is AutomationCompatibleInterface{
             if (s_surveys[_surveyId].numOfParticipantsDesired == s_surveys[_surveyId].numOfParticipantsFulfilled) {
                 s_surveys[_surveyId].surveyState = SurveyState.COMPLETED;
                 s_completedSurveys.push(_surveyId);
+                // event listener
                 emit SurveyCompleted(_surveyId);
             }
 
@@ -155,14 +180,20 @@ contract Surpay is AutomationCompatibleInterface{
      * @dev The index of s_completeSurveys is passed in from performUpkeep().
      */
     function distributeFundsFromCompletedSurvey(uint256 index) public {
-        // copy state variable to local varable for payout itteration
+
+        // copy state variable to local varable for payout iteration
         string[] memory completedSurveys = s_completedSurveys;
-        // 16 zeros for 0.01 eth
+
+        // revert if the survey has already been paid out.
+        if (s_surveys[completedSurveys[index]].surveyState == SurveyState.PAID){
+            revert Surpay__SurveyAlreadyConcluded();
+        }
+
         // total payout amount is divided between the number of participants
         uint256 ethToPay;
-
+        
         ethToPay = s_surveys[completedSurveys[index]].totalPayoutAmount / s_surveys[completedSurveys[index]].numOfParticipantsFulfilled;        
-
+        // loop through all user addresses and in the survey struct, and payout the totalPayoutAmount equally
         for(uint256 i=0;i<s_surveys[completedSurveys[index]].surveyTakers.length;i++){
             if (ethToPay < address(this).balance){
                 (bool success, ) = s_surveys[completedSurveys[index]].surveyTakers[i].call{value: ethToPay}("");
@@ -171,7 +202,21 @@ contract Surpay is AutomationCompatibleInterface{
                 }
             }
         }
+        s_surveys[completedSurveys[index]].surveyState = SurveyState.PAID;
         
+    }
+
+    function withdrawFromFeeHolder(uint256 amount) public onlyOwner {
+        if (amount > s_feeHolder){
+            revert Surpay__NotEnoughFunds();
+        } else {
+            (bool success, ) = i_owner.call{value: amount}("");
+            if (success){
+                emit FundsWithdrawn(amount);
+            } else {
+                revert Surpay__TransferFailed();
+            }
+        }
     }
 
     function removeCompletedSurveys() public onlyOwner {
