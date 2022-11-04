@@ -1,0 +1,10 @@
+[
+    {
+        "company_id": 1,
+        "survey_id": 1,
+        "title": "What do you want from you Oracle?",
+        "survey_questions": "What is the most important quality for an oracle to have?;Which of the following oracles are you using currently?;How would you rate the current services that Chainlink is providing?;",
+        "survey_responses": "dd;Affordable Rates;Capacity;Decentralization;dd;Chainlink;dd;Excellent;Good;Poor;",
+        "questions_hash": ""
+    }
+]
