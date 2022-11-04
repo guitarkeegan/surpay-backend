@@ -19,10 +19,13 @@ module.exports = async function({getNamedAccounts, deployments}){
         waitConfirmations: network.config.blockConfirmations || 1,
     });
 
-    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY){
-        log("Verifying...");
+    if (network.name == "goerli" && process.env.ETHERSCAN_API_KEY){
+        log("Verifying on etherscan...");
         await verify(surpay.address, args);
-
+    } 
+    if (network.name === "mumbai" && process.env.POLYSCAN_API_KEY) {
+        log("Verifying on polyscan...");
+        await verify(surpay.address, args);
     }
     log("Surpay Contract Deployed!")
     log("----------------------------------------------");

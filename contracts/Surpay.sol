@@ -205,7 +205,9 @@ contract Surpay is AutomationCompatibleInterface{
         s_surveys[completedSurveys[index]].surveyState = SurveyState.PAID;
         
     }
-
+    /**
+     * @dev allows owner to withdraw no more than the survey creation fees.
+     */
     function withdrawFromFeeHolder(uint256 amount) public onlyOwner {
         if (amount > s_feeHolder){
             revert Surpay__NotEnoughFunds();
@@ -219,7 +221,9 @@ contract Surpay is AutomationCompatibleInterface{
             }
         }
     }
-
+    /**
+     * Allows the owner to perform a clean up of any completed surveys
+     */
     function removeCompletedSurveys() public onlyOwner {
         string[] memory completedSurveys = s_completedSurveys;
         for(uint256 i=0;i<completedSurveys.length;i++){
