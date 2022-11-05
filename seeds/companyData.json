@@ -1,0 +1,17 @@
+[
+    {
+        "company_name": "Chainlink",
+        "email": "chain@link.com",
+        "password": "password123"
+    },
+    {
+        "company_name": "Filecoin",
+        "email": "file@coin.com",
+        "password": "password123"
+    },
+    {
+        "company_name": "Polygon",
+        "email": "poly@gon.com",
+        "password": "password123"
+    }
+]

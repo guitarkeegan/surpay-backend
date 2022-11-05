@@ -6,11 +6,10 @@ const Company = require('./Company');
 
 // Survey belongsTo Company
 Survey.belongsTo(Company, {
-    foreignKey: 'company_id',
-    onDelete: 'CASCADE',
+    foreignKey: 'company_id'
   })
 
-// Company have many Surveys
+// Company has many Surveys
 Company.hasMany(Survey, {
     foreignKey: 'company_id',
     onDelete: 'CASCADE',

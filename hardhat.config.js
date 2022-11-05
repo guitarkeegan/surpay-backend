@@ -12,6 +12,8 @@ const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://goerli.example.com
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "hi there"
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "what up";
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || "nice one!";
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "mumbai!";
+const POLYSCAN_API_KEY = process.env.POLYSCAN_API_KEY || "polywhaa?"
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -27,18 +29,27 @@ module.exports = {
       blockConfirmations: 6,
       url: GOERLI_RPC_URL,
       accounts: [PRIVATE_KEY]
+    }, 
+    mumbai: {
+      chainId: 80001,
+      blockConfirmations: 6,
+      url: MUMBAI_RPC_URL,
+      accounts: [PRIVATE_KEY]
     }
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      goerli: ETHERSCAN_API_KEY,
+      polygonMumbai: POLYSCAN_API_KEY
+    }
   },
   gasReporter: {
-    enabled: false,
+    enabled: true,
     outputFile: "gas-report.txt",
     noColors: true,
     currency: "USD",
-    // coinmarketcap: COINMARKETCAP_API_KEY,
-    token: "ETH"
+    coinmarketcap: COINMARKETCAP_API_KEY,
+    token: "MATIC"
   },
   solidity: "0.8.17",
   namedAccounts:{
