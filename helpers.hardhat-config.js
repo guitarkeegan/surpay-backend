@@ -39,5 +39,7 @@ const networkConfig = {
 }
 
 const developmentChains = ["hardhat", "localhost"];
+const frontEndContractsFile = "../surpay-frontend/surpay-frontend/constants/contractAddresses.json"
+const frontEndAbiFile = "../surpay-frontend/surpay-frontend/constants/abi.json"
 
-module.exports = {networkConfig, developmentChains}
+module.exports = {networkConfig, developmentChains, frontEndAbiFile, frontEndContractsFile}

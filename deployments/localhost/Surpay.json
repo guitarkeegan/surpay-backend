@@ -1,0 +1,688 @@
+{
+  "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_surveyCreationFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_interval",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__MaximumRespondantsReached",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__NotEnoughFunds",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__NotOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__SurveyAlreadyConcluded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__SurveyNotFound",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__TransferFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Surpay__UpkeepNotNeeded",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsWithdrawn",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "SurveyCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "SurveyCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "SurveyTakersPaid",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "surveyTaker",
+          "type": "address"
+        }
+      ],
+      "name": "UserAddedToSurvey",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "checkUpkeep",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "upkeepNeeded",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_surveyId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_companyId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_totalPayoutAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_numOfParticipantsDesired",
+          "type": "uint256"
+        }
+      ],
+      "name": "createSurvey",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "distributeFundsFromCompletedSurvey",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getAllSurveyResponseData",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getCompanyId",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getFeeHolderAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getInterval",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getLastTimeStamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getPayoutPerPersonBySurveyId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getSurveyCreationFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getSurveyPayoutAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "responseIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSurveyResponseData",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_surveyId",
+          "type": "string"
+        }
+      ],
+      "name": "getSurveyState",
+      "outputs": [
+        {
+          "internalType": "enum Surpay.SurveyState",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "surveyId",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "userIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSurveyTaker",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "performUpkeep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "removeCompletedSurveys",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_surveyId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_surveyData",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
+        }
+      ],
+      "name": "sendUserSurveyData",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdrawFromFeeHolder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xcc9e2b6250f8ae8cc5549920e93d4e0bcb1f38927856b363f8b7b254af623186",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "transactionIndex": 0,
+    "gasUsed": "2480707",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf3437bfeca6f007624c3c53538e7e1cdacb64c0394ce822f0f3580d7cd375e91",
+    "transactionHash": "0xcc9e2b6250f8ae8cc5549920e93d4e0bcb1f38927856b363f8b7b254af623186",
+    "logs": [],
+    "blockNumber": 1,
+    "cumulativeGasUsed": "2480707",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "10000000000000000",
+    "30"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "8b84b220ff8a6adf6171f01909776b4f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_surveyCreationFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_interval\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"Surpay__MaximumRespondantsReached\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__NotEnoughFunds\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__NotOwner\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__SurveyAlreadyConcluded\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__SurveyNotFound\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__TransferFailed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Surpay__UpkeepNotNeeded\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"FundsWithdrawn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"SurveyCompleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"SurveyCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"SurveyTakersPaid\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"surveyTaker\",\"type\":\"address\"}],\"name\":\"UserAddedToSurvey\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"checkUpkeep\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"upkeepNeeded\",\"type\":\"bool\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_surveyId\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_companyId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_totalPayoutAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_numOfParticipantsDesired\",\"type\":\"uint256\"}],\"name\":\"createSurvey\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"distributeFundsFromCompletedSurvey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"getAllSurveyResponseData\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"getCompanyId\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFeeHolderAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"getLastTimeStamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"}],\"name\":\"getPayoutPerPersonBySurveyId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSurveyCreationFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_surveyId\",\"type\":\"string\"}],\"name\":\"getSurveyPayoutAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"responseIndex\",\"type\":\"uint256\"}],\"name\":\"getSurveyResponseData\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_surveyId\",\"type\":\"string\"}],\"name\":\"getSurveyState\",\"outputs\":[{\"internalType\":\"enum Surpay.SurveyState\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"surveyId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"userIndex\",\"type\":\"uint256\"}],\"name\":\"getSurveyTaker\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"performUpkeep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"removeCompletedSurveys\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_surveyId\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_surveyData\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"userAddress\",\"type\":\"address\"}],\"name\":\"sendUserSurveyData\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdrawFromFeeHolder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkUpkeep(bytes)\":{\"details\":\"Returns true only if there are any complete surveys.\"},\"createSurvey(string,string,uint256,uint256)\":{\"details\":\"A survey can be created by anyone, but it must be calledwith both the total payout amount and the survey creationfee. The current fee is 0.01 ETH. \"},\"distributeFundsFromCompletedSurvey(uint256)\":{\"details\":\"The index of s_completeSurveys is passed in from performUpkeep().\"},\"performUpkeep(bytes)\":{\"details\":\"chainlink automation. perform upkeep fires if checkUpkeep returnstrue.\"},\"sendUserSurveyData(string,string,address)\":{\"details\":\"The SurveyCompleted event is the event listener\"},\"withdrawFromFeeHolder(uint256)\":{\"details\":\"allows owner to withdraw no more than the survey creation fees.\"}},\"stateVariables\":{\"i_owner\":{\"details\":\"s_surveys holds all survey data, with the surveyId as the key. completed surveys stors the surveyIds for all completed surveysThe surveyCreationFee is required for all new surveys.The surveyCreationFee is for tx fees and revenue for the service\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"removeCompletedSurveys()\":{\"notice\":\"Allows the owner to perform a clean up of any completed surveys\"},\"sendUserSurveyData(string,string,address)\":{\"notice\":\"Function can only be called by the contract owner.This was neccissary to ensure that the user data wasa valid response to the survey. \"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Surpay.sol\":\"Surpay\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface AutomationCompatibleInterface {\\n  /**\\n   * @notice method that is simulated by the keepers to see if any work actually\\n   * needs to be performed. This method does does not actually need to be\\n   * executable, and since it is only ever simulated it can consume lots of gas.\\n   * @dev To ensure that it is never called, you may want to add the\\n   * cannotExecute modifier from KeeperBase to your implementation of this\\n   * method.\\n   * @param checkData specified in the upkeep registration so it is always the\\n   * same for a registered upkeep. This can easily be broken down into specific\\n   * arguments using `abi.decode`, so multiple upkeeps can be registered on the\\n   * same contract and easily differentiated by the contract.\\n   * @return upkeepNeeded boolean to indicate whether the keeper should call\\n   * performUpkeep or not.\\n   * @return performData bytes that the keeper should call performUpkeep with, if\\n   * upkeep is needed. If you would like to encode data to decode later, try\\n   * `abi.encode`.\\n   */\\n  function checkUpkeep(bytes calldata checkData) external returns (bool upkeepNeeded, bytes memory performData);\\n\\n  /**\\n   * @notice method that is actually executed by the keepers, via the registry.\\n   * The data returned by the checkUpkeep simulation will be passed into\\n   * this method to actually be executed.\\n   * @dev The input to this method should not be trusted, and the caller of the\\n   * method should not even be restricted to any single registry. Anyone should\\n   * be able call it, and the input should be validated, there is no guarantee\\n   * that the data passed in is the performData returned from checkUpkeep. This\\n   * could happen due to malicious keepers, racing keepers, or simply a state\\n   * change while the performUpkeep transaction is waiting for confirmation.\\n   * Always validate the data passed in.\\n   * @param performData is the data which was passed back from the checkData\\n   * simulation. If it is encoded, it can easily be decoded into other types by\\n   * calling `abi.decode`. This data should not be trusted, and should be\\n   * validated against the contract's current state.\\n   */\\n  function performUpkeep(bytes calldata performData) external;\\n}\\n\",\"keccak256\":\"0x67076747c6f66d8d43472a56e72879c350056bff82e069addaf9064922863340\",\"license\":\"MIT\"},\"contracts/Surpay.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.8;\\n\\n/**\\n * @title Surpay\\n * @author Keegan Anglim and Alan Abed\\n * @notice This contract is meant to be a demo and should not be used\\n * in production\\n * @notice The purpose of this contract is to facilitate an exchange\\n * of survey data for funds.\\n */\\n\\nimport \\\"@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol\\\";\\n\\nerror Surpay__NotEnoughFunds();\\nerror Surpay__MissingRequiredFields();\\nerror Surpay__TransferFailed();\\nerror Surpay__SurveyNotFound();\\nerror Surpay__MaximumRespondantsReached();\\nerror Surpay__NotOwner();\\nerror Surpay__UpkeepNotNeeded();\\nerror Surpay__SurveyAlreadyConcluded();\\n\\ncontract Surpay is AutomationCompatibleInterface{\\n\\n    /* Type Declarations  */\\n\\n    /**\\n     * @dev Survey will hold the survey ID as well as a mapping for each user address and response data for the survey.\\n     */\\n    struct Survey{\\n        \\n        string companyId;\\n        address companyAddress;\\n        uint256 totalPayoutAmount;\\n        uint256 numOfParticipantsDesired;\\n        uint256 numOfParticipantsFulfilled;\\n        string[] surveyResponseData;\\n        address payable[] surveyTakers;\\n        uint256 startTimeStamp;\\n        SurveyState surveyState;\\n    }\\n    /**\\n     * @dev The survey state was needed in an ealier version of the contract\\n     * @dev We are leaving it in, because a get state function is used in \\n     * @dev one of our unit tests.\\n     */\\n    enum SurveyState{\\n        OPEN,\\n        COMPLETED,\\n        PAID\\n    }\\n    \\n    /* state variables  */\\n    /**\\n     * @dev s_surveys holds all survey data, with the surveyId as the key. \\n     * @dev completed surveys stors the surveyIds for all completed surveys\\n     * @dev The surveyCreationFee is required for all new surveys.\\n     * @dev The surveyCreationFee is for tx fees and revenue for the service\\n     */\\n    address i_owner;\\n    mapping (string=>Survey) s_surveys;\\n    string[] private s_completedSurveys;\\n    uint256 private immutable i_surveyCreationFee;\\n    uint256 private s_feeHolder;\\n\\n    /* survey variables  */\\n    uint256 private immutable i_interval;\\n\\n    /* modifiers */\\n    modifier onlyOwner(){\\n        if (msg.sender != i_owner) revert Surpay__NotOwner();\\n        _;\\n    }\\n\\n    /* constructor */\\n    constructor(uint256 _surveyCreationFee, uint256 _interval){\\n        i_owner = msg.sender;\\n        i_surveyCreationFee = _surveyCreationFee;\\n        i_interval = _interval;\\n    }\\n\\n    /* events */\\n    event SurveyCreated(string indexed surveyId);\\n    event UserAddedToSurvey(address indexed surveyTaker);\\n    event SurveyCompleted(string indexed surveyId);\\n    event SurveyTakersPaid(string indexed surveyId);\\n    event FundsWithdrawn(uint256 indexed amount);\\n    \\n\\n    /* functions */\\n    /**\\n     * @dev chainlink automation. perform upkeep fires if checkUpkeep returns\\n     * @dev true.\\n     */\\n    function performUpkeep(bytes calldata /* performData */) external override{\\n        (bool upkeepNeeded, ) = checkUpkeep(\\\"\\\");\\n        // logic for what should happen if upkeepNeeded is true\\n        if (upkeepNeeded) {\\n            string[] memory completedSurveys = s_completedSurveys;\\n            for (uint256 i=0;i<completedSurveys.length;i++){\\n            distributeFundsFromCompletedSurvey(i);\\n            emit SurveyTakersPaid(completedSurveys[i]);\\n        } \\n        } else {\\n            revert Surpay__UpkeepNotNeeded();\\n        }\\n    }\\n    /**\\n     * @dev Returns true only if there are any complete surveys.\\n     */\\n    function checkUpkeep(bytes memory /* checkData */) public returns (bool upkeepNeeded, bytes memory /* performData */){\\n        // conditions for automation to be performed\\n        if (s_completedSurveys.length > 0){\\n            upkeepNeeded = true;\\n        } else {\\n            upkeepNeeded = false;\\n        }\\n    }\\n    /**\\n     * @dev A survey can be created by anyone, but it must be called\\n     * @dev with both the total payout amount and the survey creation\\n     * @dev fee. The current fee is 0.01 ETH. \\n     */\\n    function createSurvey(\\n        string memory _surveyId,\\n        string memory _companyId, \\n        uint256 _totalPayoutAmount, \\n        uint256 _numOfParticipantsDesired\\n        ) public payable {\\n            if (msg.value < i_surveyCreationFee + _totalPayoutAmount){\\n                revert Surpay__NotEnoughFunds();\\n            }\\n\\n            s_feeHolder += i_surveyCreationFee;\\n  \\n            Survey memory newSurvey;\\n            newSurvey.companyId = _companyId;\\n            newSurvey.companyAddress = msg.sender;\\n            newSurvey.totalPayoutAmount = _totalPayoutAmount;\\n            newSurvey.numOfParticipantsDesired = _numOfParticipantsDesired;\\n            newSurvey.startTimeStamp = block.timestamp;\\n            newSurvey.surveyState = SurveyState.OPEN;\\n            \\n            s_surveys[_surveyId] = newSurvey;\\n            emit SurveyCreated(_surveyId);\\n    }\\n    /**\\n     * @notice Function can only be called by the contract owner.\\n     * @notice This was neccissary to ensure that the user data was\\n     * @notice a valid response to the survey.\\n     * \\n     * @dev The SurveyCompleted event is the event listener\\n     */\\n    function sendUserSurveyData(string memory _surveyId, string memory _surveyData, address userAddress) public onlyOwner {\\n        \\n        if (s_surveys[_surveyId].numOfParticipantsDesired > s_surveys[_surveyId].numOfParticipantsFulfilled) {\\n            // store the user address, store survey data in Survey object\\n            s_surveys[_surveyId].surveyResponseData.push(_surveyData);\\n            s_surveys[_surveyId].surveyTakers.push(payable(userAddress));\\n            s_surveys[_surveyId].numOfParticipantsFulfilled++;\\n            // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED. Add to completedSurveys array. \\n            if (s_surveys[_surveyId].numOfParticipantsDesired == s_surveys[_surveyId].numOfParticipantsFulfilled) {\\n                s_surveys[_surveyId].surveyState = SurveyState.COMPLETED;\\n                s_completedSurveys.push(_surveyId);\\n                // event listener\\n                emit SurveyCompleted(_surveyId);\\n            }\\n\\n            emit UserAddedToSurvey(userAddress);\\n            \\n\\n        } else {\\n            revert Surpay__MaximumRespondantsReached();\\n        }\\n    }\\n    \\n    /**\\n     * @dev The index of s_completeSurveys is passed in from performUpkeep().\\n     */\\n    function distributeFundsFromCompletedSurvey(uint256 index) public {\\n\\n        // copy state variable to local varable for payout iteration\\n        string[] memory completedSurveys = s_completedSurveys;\\n\\n        // revert if the survey has already been paid out.\\n        if (s_surveys[completedSurveys[index]].surveyState == SurveyState.PAID){\\n            revert Surpay__SurveyAlreadyConcluded();\\n        }\\n\\n        // total payout amount is divided between the number of participants\\n        uint256 ethToPay;\\n        \\n        ethToPay = s_surveys[completedSurveys[index]].totalPayoutAmount / s_surveys[completedSurveys[index]].numOfParticipantsFulfilled;        \\n        // loop through all user addresses and in the survey struct, and payout the totalPayoutAmount equally\\n        for(uint256 i=0;i<s_surveys[completedSurveys[index]].surveyTakers.length;i++){\\n            if (ethToPay < address(this).balance){\\n                (bool success, ) = s_surveys[completedSurveys[index]].surveyTakers[i].call{value: ethToPay}(\\\"\\\");\\n                if (!success){\\n                    revert Surpay__TransferFailed();\\n                }\\n            }\\n        }\\n        s_surveys[completedSurveys[index]].surveyState = SurveyState.PAID;\\n        \\n    }\\n    /**\\n     * @dev allows owner to withdraw no more than the survey creation fees.\\n     */\\n    function withdrawFromFeeHolder(uint256 amount) public onlyOwner {\\n        if (amount > s_feeHolder){\\n            revert Surpay__NotEnoughFunds();\\n        } else {\\n            (bool success, ) = i_owner.call{value: amount}(\\\"\\\");\\n            if (success){\\n                s_feeHolder -= amount;\\n                emit FundsWithdrawn(amount);\\n            } else {\\n                revert Surpay__TransferFailed();\\n            }\\n        }\\n    }\\n    /**\\n     * Allows the owner to perform a clean up of any completed surveys\\n     */\\n    function removeCompletedSurveys() public onlyOwner {\\n        string[] memory completedSurveys = s_completedSurveys;\\n        for(uint256 i=0;i<completedSurveys.length;i++){\\n            delete(s_surveys[completedSurveys[i]]);\\n        }\\n    }\\n\\n    /* view/pure functions  */\\n\\n    function getOwner() public view returns(address){\\n        return i_owner;\\n    }\\n\\n    function getSurveyState(string memory _surveyId) public view returns(SurveyState){\\n        if (s_surveys[_surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[_surveyId].surveyState;\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n        \\n    }\\n\\n    function getFeeHolderAmount() public view returns(uint256){\\n        return s_feeHolder;\\n    }\\n\\n    function getSurveyCreationFee() public view returns(uint256) {\\n        return i_surveyCreationFee;\\n    }\\n\\n    function getInterval() public view returns(uint256) {\\n        return i_interval;\\n    }\\n\\n    function getCompanyId(string memory surveyId) public view returns(string memory){\\n        return s_surveys[surveyId].companyId;\\n    }\\n\\n    function getSurveyPayoutAmount(string memory _surveyId) public view returns(uint256){\\n        if (s_surveys[_surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[_surveyId].totalPayoutAmount;\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n    }\\n\\n    function getSurveyTaker(string memory surveyId, uint256 userIndex) public view returns(address){\\n        // add the address of a survey taker\\n        if (s_surveys[surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[surveyId].surveyTakers[userIndex];\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n        \\n    }\\n    \\n    function getAllSurveyResponseData(string memory surveyId) public view returns(string[] memory){\\n        if (s_surveys[surveyId].numOfParticipantsDesired > 0){\\n            return  s_surveys[surveyId].surveyResponseData;\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n    }\\n\\n    function getSurveyResponseData(string memory surveyId, uint256 responseIndex) public view returns(string memory){\\n        if (s_surveys[surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[surveyId].surveyResponseData[responseIndex];\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n        \\n    }\\n\\n    function getLastTimeStamp(string memory surveyId) public view returns(uint256){\\n        if (s_surveys[surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[surveyId].startTimeStamp;\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n    }\\n\\n    function getPayoutPerPersonBySurveyId(string memory surveyId) public view returns(uint256){\\n        if (s_surveys[surveyId].numOfParticipantsDesired > 0){\\n            return s_surveys[surveyId].totalPayoutAmount / s_surveys[surveyId].numOfParticipantsDesired;\\n        } else {\\n            revert Surpay__SurveyNotFound();\\n        }\\n    }\\n}\",\"keccak256\":\"0x0c5cb63a2803b6b1f13161c3b63e5370d21089f31ece0bfaa0a76b66ce8c78c1\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60c06040523480156200001157600080fd5b5060405162002ce138038062002ce18339818101604052810190620000379190620000cf565b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555081608081815250508060a08181525050505062000116565b600080fd5b6000819050919050565b620000a98162000094565b8114620000b557600080fd5b50565b600081519050620000c9816200009e565b92915050565b60008060408385031215620000e957620000e86200008f565b5b6000620000f985828601620000b8565b92505060206200010c85828601620000b8565b9150509250929050565b60805160a051612b976200014a6000396000610e1d015260008181610ecf01528181610f3301526111fa0152612b976000f3fe6080604052600436106101145760003560e01c806391ad27b4116100a0578063c3b9a2c811610064578063c3b9a2c8146103df578063e1744d7214610408578063e46552c914610445578063e74b36df1461046e578063eb9992c3146104ab57610114565b806391ad27b4146102f35780639759ac361461031e578063ac9d6a2b1461035b578063b374ff2914610377578063bab26fd2146103b457610114565b80634585e33b116100e75780634585e33b146101e757806350597f8a14610210578063653cba7d1461024d5780636e04ff0d1461028a578063893d20e8146102c857610114565b806301b43c3e14610119578063129983011461014457806324405aa91461018157806324445aeb146101be575b600080fd5b34801561012557600080fd5b5061012e6104c2565b60405161013b9190611dbf565b60405180910390f35b34801561015057600080fd5b5061016b60048036038101906101669190611f60565b6104cc565b6040516101789190611ffd565b60405180910390f35b34801561018d57600080fd5b506101a860048036038101906101a39190611f60565b610594565b6040516101b59190612097565b60405180910390f35b3480156101ca57600080fd5b506101e560048036038101906101e091906120e5565b6106c5565b005b3480156101f357600080fd5b5061020e600480360381019061020991906121d0565b610a2a565b005b34801561021c57600080fd5b506102376004803603810190610232919061221d565b610be5565b6040516102449190612372565b60405180910390f35b34801561025957600080fd5b50610274600480360381019061026f919061221d565b610d40565b6040516102819190611dbf565b60405180910390f35b34801561029657600080fd5b506102b160048036038101906102ac9190612435565b610dcb565b6040516102bf9291906124ee565b60405180910390f35b3480156102d457600080fd5b506102dd610df0565b6040516102ea9190611ffd565b60405180910390f35b3480156102ff57600080fd5b50610308610e19565b6040516103159190611dbf565b60405180910390f35b34801561032a57600080fd5b506103456004803603810190610340919061221d565b610e41565b6040516103529190611dbf565b60405180910390f35b6103756004803603810190610370919061251e565b610ecc565b005b34801561038357600080fd5b5061039e6004803603810190610399919061221d565b61115e565b6040516103ab9190612634565b60405180910390f35b3480156103c057600080fd5b506103c96111f6565b6040516103d69190611dbf565b60405180910390f35b3480156103eb57600080fd5b506104066004803603810190610401919061264f565b61121e565b005b34801561041457600080fd5b5061042f600480360381019061042a919061221d565b611609565b60405161043c9190612097565b60405180910390f35b34801561045157600080fd5b5061046c6004803603810190610467919061264f565b6116bc565b005b34801561047a57600080fd5b506104956004803603810190610490919061221d565b611891565b6040516104a29190611dbf565b60405180910390f35b3480156104b757600080fd5b506104c0611948565b005b6000600354905090565b6000806001846040516104df91906126b8565b908152602001604051809103902060030154111561055c5760018360405161050791906126b8565b9081526020016040518091039020600601828154811061052a576105296126cf565b5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905061058e565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b92915050565b606060006001846040516105a891906126b8565b908152602001604051809103902060030154111561068d576001836040516105d091906126b8565b908152602001604051809103902060050182815481106105f3576105f26126cf565b5b9060005260206000200180546106089061272d565b80601f01602080910402602001604051908101604052809291908181526020018280546106349061272d565b80156106815780601f1061065657610100808354040283529160200191610681565b820191906000526020600020905b81548152906001019060200180831161066457829003601f168201915b505050505090506106bf565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b92915050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461074a576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60018360405161075a91906126b8565b90815260200160405180910390206004015460018460405161077c91906126b8565b90815260200160405180910390206003015411156109f3576001836040516107a491906126b8565b9081526020016040518091039020600501829080600181540180825580915050600190039060005260206000200160009091909190915090816107e7919061290a565b506001836040516107f891906126b8565b9081526020016040518091039020600601819080600181540180825580915050600190039060005260206000200160009091909190916101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060018360405161087a91906126b8565b9081526020016040518091039020600401600081548092919061089c90612a0b565b91905055506001836040516108b191906126b8565b9081526020016040518091039020600401546001846040516108d391906126b8565b908152602001604051809103902060030154036109ab57600180846040516108fb91906126b8565b908152602001604051809103902060080160006101000a81548160ff0219169083600281111561092e5761092d6125bd565b5b0217905550600283908060018154018082558091505060019003906000526020600020016000909190919091509081610967919061290a565b508260405161097691906126b8565b60405180910390207fc9629617ac320e57fa622f79c211617de659a3b7cbdda927e47dea5e4c0ab4da60405160405180910390a25b8073ffffffffffffffffffffffffffffffffffffffff167f099cc064944e6569611b439843932fa853d46618d78ca5a8e3989bcc5614853d60405160405180910390a2610a25565b6040517f13c8108e00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050565b6000610a4460405180602001604052806000815250610dcb565b5090508015610bae5760006002805480602002602001604051908101604052809291908181526020016000905b82821015610b1d578382906000526020600020018054610a909061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054610abc9061272d565b8015610b095780601f10610ade57610100808354040283529160200191610b09565b820191906000526020600020905b815481529060010190602001808311610aec57829003601f168201915b505050505081526020019060010190610a71565b50505050905060005b8151811015610ba757610b388161121e565b818181518110610b4b57610b4a6126cf565b5b6020026020010151604051610b6091906126b8565b60405180910390207fa7998895d8d2e7856091bd8a5895a54d831c4d6c8bd8a8611ec2c1f873872fef60405160405180910390a28080610b9f90612a0b565b915050610b26565b5050610be0565b6040517fe47d1a5100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050565b60606000600183604051610bf991906126b8565b9081526020016040518091039020600301541115610d0957600182604051610c2191906126b8565b9081526020016040518091039020600501805480602002602001604051908101604052809291908181526020016000905b82821015610cfe578382906000526020600020018054610c719061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054610c9d9061272d565b8015610cea5780601f10610cbf57610100808354040283529160200191610cea565b820191906000526020600020905b815481529060010190602001808311610ccd57829003601f168201915b505050505081526020019060010190610c52565b505050509050610d3b565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b600080600183604051610d5391906126b8565b9081526020016040518091039020600301541115610d9457600182604051610d7b91906126b8565b9081526020016040518091039020600701549050610dc6565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b6000606060006002805490501115610de65760019150610deb565b600091505b915091565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b600080600183604051610e5491906126b8565b9081526020016040518091039020600301541115610e9557600182604051610e7c91906126b8565b9081526020016040518091039020600201549050610ec7565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b817f0000000000000000000000000000000000000000000000000000000000000000610ef89190612a53565b341015610f31576040517fc09bb52500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b7f000000000000000000000000000000000000000000000000000000000000000060036000828254610f639190612a53565b92505081905550610f72611b8c565b83816000018190525033816020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250508281604001818152505081816060018181525050428160e001818152505060008161010001906002811115610feb57610fea6125bd565b5b90816002811115610fff57610ffe6125bd565b5b815250508060018660405161101491906126b8565b90815260200160405180910390206000820151816000019081611037919061290a565b5060208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060408201518160020155606082015181600301556080820151816004015560a08201518160050190805190602001906110b9929190611c00565b5060c08201518160060190805190602001906110d6929190611c59565b5060e082015181600701556101008201518160080160006101000a81548160ff0219169083600281111561110d5761110c6125bd565b5b02179055509050508460405161112391906126b8565b60405180910390207fcc65c6fb1d804ba1dc418f9e3659483d310357279f035d45b8ea484fd6fe4a2f60405160405180910390a25050505050565b60008060018360405161117191906126b8565b90815260200160405180910390206003015411156111bf5760018260405161119991906126b8565b908152602001604051809103902060080160009054906101000a900460ff1690506111f1565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b60006002805480602002602001604051908101604052809291908181526020016000905b828210156112ee5783829060005260206000200180546112619061272d565b80601f016020809104026020016040519081016040528092919081815260200182805461128d9061272d565b80156112da5780601f106112af576101008083540402835291602001916112da565b820191906000526020600020905b8154815290600101906020018083116112bd57829003601f168201915b505050505081526020019060010190611242565b505050509050600280811115611307576113066125bd565b5b600182848151811061131c5761131b6126cf565b5b602002602001015160405161133191906126b8565b908152602001604051809103902060080160009054906101000a900460ff166002811115611362576113616125bd565b5b03611399576040517f4fc98f3b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600060018284815181106113b0576113af6126cf565b5b60200260200101516040516113c591906126b8565b90815260200160405180910390206004015460018385815181106113ec576113eb6126cf565b5b602002602001015160405161140191906126b8565b90815260200160405180910390206002015461141d9190612ab6565b905060005b6001838581518110611437576114366126cf565b5b602002602001015160405161144c91906126b8565b90815260200160405180910390206006018054905081101561159f574782101561158c5760006001848681518110611487576114866126cf565b5b602002602001015160405161149c91906126b8565b908152602001604051809103902060060182815481106114bf576114be6126cf565b5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168360405161150d90612b18565b60006040518083038185875af1925050503d806000811461154a576040519150601f19603f3d011682016040523d82523d6000602084013e61154f565b606091505b505090508061158a576040517f09e6a19a00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505b808061159790612a0b565b915050611422565b50600260018385815181106115b7576115b66126cf565b5b60200260200101516040516115cc91906126b8565b908152602001604051809103902060080160006101000a81548160ff021916908360028111156115ff576115fe6125bd565b5b0217905550505050565b606060018260405161161b91906126b8565b908152602001604051809103902060000180546116379061272d565b80601f01602080910402602001604051908101604052809291908181526020018280546116639061272d565b80156116b05780601f10611685576101008083540402835291602001916116b0565b820191906000526020600020905b81548152906001019060200180831161169357829003601f168201915b50505050509050919050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614611741576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60035481111561177d576040517fc09bb52500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16826040516117c490612b18565b60006040518083038185875af1925050503d8060008114611801576040519150601f19603f3d011682016040523d82523d6000602084013e611806565b606091505b50509050801561185b5781600360008282546118229190612b2d565b92505081905550817f4a37b25aab49761ecf63117fe82b98d750917451133cf797507bc9fb5b96044a60405160405180910390a261188d565b6040517f09e6a19a00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5050565b6000806001836040516118a491906126b8565b9081526020016040518091039020600301541115611911576001826040516118cc91906126b8565b9081526020016040518091039020600301546001836040516118ee91906126b8565b90815260200160405180910390206002015461190a9190612ab6565b9050611943565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16146119cd576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60006002805480602002602001604051908101604052809291908181526020016000905b82821015611a9d578382906000526020600020018054611a109061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054611a3c9061272d565b8015611a895780601f10611a5e57610100808354040283529160200191611a89565b820191906000526020600020905b815481529060010190602001808311611a6c57829003601f168201915b5050505050815260200190600101906119f1565b50505050905060005b8151811015611b88576001828281518110611ac457611ac36126cf565b5b6020026020010151604051611ad991906126b8565b908152602001604051809103902060008082016000611af89190611ce3565b6001820160006101000a81549073ffffffffffffffffffffffffffffffffffffffff0219169055600282016000905560038201600090556004820160009055600582016000611b479190611d23565b600682016000611b579190611d44565b60078201600090556008820160006101000a81549060ff021916905550508080611b8090612a0b565b915050611aa6565b5050565b60405180610120016040528060608152602001600073ffffffffffffffffffffffffffffffffffffffff16815260200160008152602001600081526020016000815260200160608152602001606081526020016000815260200160006002811115611bfa57611bf96125bd565b5b81525090565b828054828255906000526020600020908101928215611c48579160200282015b82811115611c47578251829081611c37919061290a565b5091602001919060010190611c20565b5b509050611c559190611d65565b5090565b828054828255906000526020600020908101928215611cd2579160200282015b82811115611cd15782518260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555091602001919060010190611c79565b5b509050611cdf9190611d89565b5090565b508054611cef9061272d565b6000825580601f10611d015750611d20565b601f016020900490600052602060002090810190611d1f9190611d89565b5b50565b5080546000825590600052602060002090810190611d419190611d65565b50565b5080546000825590600052602060002090810190611d629190611d89565b50565b5b80821115611d855760008181611d7c9190611ce3565b50600101611d66565b5090565b5b80821115611da2576000816000905550600101611d8a565b5090565b6000819050919050565b611db981611da6565b82525050565b6000602082019050611dd46000830184611db0565b92915050565b6000604051905090565b600080fd5b600080fd5b600080fd5b600080fd5b6000601f19601f8301169050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b611e4182611df8565b810181811067ffffffffffffffff82111715611e6057611e5f611e09565b5b80604052505050565b6000611e73611dda565b9050611e7f8282611e38565b919050565b600067ffffffffffffffff821115611e9f57611e9e611e09565b5b611ea882611df8565b9050602081019050919050565b82818337600083830152505050565b6000611ed7611ed284611e84565b611e69565b905082815260208101848484011115611ef357611ef2611df3565b5b611efe848285611eb5565b509392505050565b600082601f830112611f1b57611f1a611dee565b5b8135611f2b848260208601611ec4565b91505092915050565b611f3d81611da6565b8114611f4857600080fd5b50565b600081359050611f5a81611f34565b92915050565b60008060408385031215611f7757611f76611de4565b5b600083013567ffffffffffffffff811115611f9557611f94611de9565b5b611fa185828601611f06565b9250506020611fb285828601611f4b565b9150509250929050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000611fe782611fbc565b9050919050565b611ff781611fdc565b82525050565b60006020820190506120126000830184611fee565b92915050565b600081519050919050565b600082825260208201905092915050565b60005b83811015612052578082015181840152602081019050612037565b60008484015250505050565b600061206982612018565b6120738185612023565b9350612083818560208601612034565b61208c81611df8565b840191505092915050565b600060208201905081810360008301526120b1818461205e565b905092915050565b6120c281611fdc565b81146120cd57600080fd5b50565b6000813590506120df816120b9565b92915050565b6000806000606084860312156120fe576120fd611de4565b5b600084013567ffffffffffffffff81111561211c5761211b611de9565b5b61212886828701611f06565b935050602084013567ffffffffffffffff81111561214957612148611de9565b5b61215586828701611f06565b9250506040612166868287016120d0565b9150509250925092565b600080fd5b600080fd5b60008083601f8401126121905761218f611dee565b5b8235905067ffffffffffffffff8111156121ad576121ac612170565b5b6020830191508360018202830111156121c9576121c8612175565b5b9250929050565b600080602083850312156121e7576121e6611de4565b5b600083013567ffffffffffffffff81111561220557612204611de9565b5b6122118582860161217a565b92509250509250929050565b60006020828403121561223357612232611de4565b5b600082013567ffffffffffffffff81111561225157612250611de9565b5b61225d84828501611f06565b91505092915050565b600081519050919050565b600082825260208201905092915050565b6000819050602082019050919050565b600082825260208201905092915050565b60006122ae82612018565b6122b88185612292565b93506122c8818560208601612034565b6122d181611df8565b840191505092915050565b60006122e883836122a3565b905092915050565b6000602082019050919050565b600061230882612266565b6123128185612271565b93508360208202850161232485612282565b8060005b85811015612360578484038952815161234185826122dc565b945061234c836122f0565b925060208a01995050600181019050612328565b50829750879550505050505092915050565b6000602082019050818103600083015261238c81846122fd565b905092915050565b600067ffffffffffffffff8211156123af576123ae611e09565b5b6123b882611df8565b9050602081019050919050565b60006123d86123d384612394565b611e69565b9050828152602081018484840111156123f4576123f3611df3565b5b6123ff848285611eb5565b509392505050565b600082601f83011261241c5761241b611dee565b5b813561242c8482602086016123c5565b91505092915050565b60006020828403121561244b5761244a611de4565b5b600082013567ffffffffffffffff81111561246957612468611de9565b5b61247584828501612407565b91505092915050565b60008115159050919050565b6124938161247e565b82525050565b600081519050919050565b600082825260208201905092915050565b60006124c082612499565b6124ca81856124a4565b93506124da818560208601612034565b6124e381611df8565b840191505092915050565b6000604082019050612503600083018561248a565b818103602083015261251581846124b5565b90509392505050565b6000806000806080858703121561253857612537611de4565b5b600085013567ffffffffffffffff81111561255657612555611de9565b5b61256287828801611f06565b945050602085013567ffffffffffffffff81111561258357612582611de9565b5b61258f87828801611f06565b93505060406125a087828801611f4b565b92505060606125b187828801611f4b565b91505092959194509250565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b600381106125fd576125fc6125bd565b5b50565b600081905061260e826125ec565b919050565b600061261e82612600565b9050919050565b61262e81612613565b82525050565b60006020820190506126496000830184612625565b92915050565b60006020828403121561266557612664611de4565b5b600061267384828501611f4b565b91505092915050565b600081905092915050565b600061269282612018565b61269c818561267c565b93506126ac818560208601612034565b80840191505092915050565b60006126c48284612687565b915081905092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b6000600282049050600182168061274557607f821691505b602082108103612758576127576126fe565b5b50919050565b60008190508160005260206000209050919050565b60006020601f8301049050919050565b600082821b905092915050565b6000600883026127c07fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82612783565b6127ca8683612783565b95508019841693508086168417925050509392505050565b6000819050919050565b60006128076128026127fd84611da6565b6127e2565b611da6565b9050919050565b6000819050919050565b612821836127ec565b61283561282d8261280e565b848454612790565b825550505050565b600090565b61284a61283d565b612855818484612818565b505050565b5b818110156128795761286e600082612842565b60018101905061285b565b5050565b601f8211156128be5761288f8161275e565b61289884612773565b810160208510156128a7578190505b6128bb6128b385612773565b83018261285a565b50505b505050565b600082821c905092915050565b60006128e1600019846008026128c3565b1980831691505092915050565b60006128fa83836128d0565b9150826002028217905092915050565b61291382612018565b67ffffffffffffffff81111561292c5761292b611e09565b5b612936825461272d565b61294182828561287d565b600060209050601f8311600181146129745760008415612962578287015190505b61296c85826128ee565b8655506129d4565b601f1984166129828661275e565b60005b828110156129aa57848901518255600182019150602085019450602081019050612985565b868310156129c757848901516129c3601f8916826128d0565b8355505b6001600288020188555050505b505050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000612a1682611da6565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8203612a4857612a476129dc565b5b600182019050919050565b6000612a5e82611da6565b9150612a6983611da6565b9250828201905080821115612a8157612a806129dc565b5b92915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b6000612ac182611da6565b9150612acc83611da6565b925082612adc57612adb612a87565b5b828204905092915050565b600081905092915050565b50565b6000612b02600083612ae7565b9150612b0d82612af2565b600082019050919050565b6000612b2382612af5565b9150819050919050565b6000612b3882611da6565b9150612b4383611da6565b9250828203905081811115612b5b57612b5a6129dc565b5b9291505056fea264697066735822122075417340a0b59d38585a15c6a24f3a24ef7df2e2f297420a46510cffcb9ec84364736f6c63430008110033",
+  "deployedBytecode": "0x6080604052600436106101145760003560e01c806391ad27b4116100a0578063c3b9a2c811610064578063c3b9a2c8146103df578063e1744d7214610408578063e46552c914610445578063e74b36df1461046e578063eb9992c3146104ab57610114565b806391ad27b4146102f35780639759ac361461031e578063ac9d6a2b1461035b578063b374ff2914610377578063bab26fd2146103b457610114565b80634585e33b116100e75780634585e33b146101e757806350597f8a14610210578063653cba7d1461024d5780636e04ff0d1461028a578063893d20e8146102c857610114565b806301b43c3e14610119578063129983011461014457806324405aa91461018157806324445aeb146101be575b600080fd5b34801561012557600080fd5b5061012e6104c2565b60405161013b9190611dbf565b60405180910390f35b34801561015057600080fd5b5061016b60048036038101906101669190611f60565b6104cc565b6040516101789190611ffd565b60405180910390f35b34801561018d57600080fd5b506101a860048036038101906101a39190611f60565b610594565b6040516101b59190612097565b60405180910390f35b3480156101ca57600080fd5b506101e560048036038101906101e091906120e5565b6106c5565b005b3480156101f357600080fd5b5061020e600480360381019061020991906121d0565b610a2a565b005b34801561021c57600080fd5b506102376004803603810190610232919061221d565b610be5565b6040516102449190612372565b60405180910390f35b34801561025957600080fd5b50610274600480360381019061026f919061221d565b610d40565b6040516102819190611dbf565b60405180910390f35b34801561029657600080fd5b506102b160048036038101906102ac9190612435565b610dcb565b6040516102bf9291906124ee565b60405180910390f35b3480156102d457600080fd5b506102dd610df0565b6040516102ea9190611ffd565b60405180910390f35b3480156102ff57600080fd5b50610308610e19565b6040516103159190611dbf565b60405180910390f35b34801561032a57600080fd5b506103456004803603810190610340919061221d565b610e41565b6040516103529190611dbf565b60405180910390f35b6103756004803603810190610370919061251e565b610ecc565b005b34801561038357600080fd5b5061039e6004803603810190610399919061221d565b61115e565b6040516103ab9190612634565b60405180910390f35b3480156103c057600080fd5b506103c96111f6565b6040516103d69190611dbf565b60405180910390f35b3480156103eb57600080fd5b506104066004803603810190610401919061264f565b61121e565b005b34801561041457600080fd5b5061042f600480360381019061042a919061221d565b611609565b60405161043c9190612097565b60405180910390f35b34801561045157600080fd5b5061046c6004803603810190610467919061264f565b6116bc565b005b34801561047a57600080fd5b506104956004803603810190610490919061221d565b611891565b6040516104a29190611dbf565b60405180910390f35b3480156104b757600080fd5b506104c0611948565b005b6000600354905090565b6000806001846040516104df91906126b8565b908152602001604051809103902060030154111561055c5760018360405161050791906126b8565b9081526020016040518091039020600601828154811061052a576105296126cf565b5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905061058e565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b92915050565b606060006001846040516105a891906126b8565b908152602001604051809103902060030154111561068d576001836040516105d091906126b8565b908152602001604051809103902060050182815481106105f3576105f26126cf565b5b9060005260206000200180546106089061272d565b80601f01602080910402602001604051908101604052809291908181526020018280546106349061272d565b80156106815780601f1061065657610100808354040283529160200191610681565b820191906000526020600020905b81548152906001019060200180831161066457829003601f168201915b505050505090506106bf565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b92915050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461074a576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60018360405161075a91906126b8565b90815260200160405180910390206004015460018460405161077c91906126b8565b90815260200160405180910390206003015411156109f3576001836040516107a491906126b8565b9081526020016040518091039020600501829080600181540180825580915050600190039060005260206000200160009091909190915090816107e7919061290a565b506001836040516107f891906126b8565b9081526020016040518091039020600601819080600181540180825580915050600190039060005260206000200160009091909190916101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060018360405161087a91906126b8565b9081526020016040518091039020600401600081548092919061089c90612a0b565b91905055506001836040516108b191906126b8565b9081526020016040518091039020600401546001846040516108d391906126b8565b908152602001604051809103902060030154036109ab57600180846040516108fb91906126b8565b908152602001604051809103902060080160006101000a81548160ff0219169083600281111561092e5761092d6125bd565b5b0217905550600283908060018154018082558091505060019003906000526020600020016000909190919091509081610967919061290a565b508260405161097691906126b8565b60405180910390207fc9629617ac320e57fa622f79c211617de659a3b7cbdda927e47dea5e4c0ab4da60405160405180910390a25b8073ffffffffffffffffffffffffffffffffffffffff167f099cc064944e6569611b439843932fa853d46618d78ca5a8e3989bcc5614853d60405160405180910390a2610a25565b6040517f13c8108e00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050565b6000610a4460405180602001604052806000815250610dcb565b5090508015610bae5760006002805480602002602001604051908101604052809291908181526020016000905b82821015610b1d578382906000526020600020018054610a909061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054610abc9061272d565b8015610b095780601f10610ade57610100808354040283529160200191610b09565b820191906000526020600020905b815481529060010190602001808311610aec57829003601f168201915b505050505081526020019060010190610a71565b50505050905060005b8151811015610ba757610b388161121e565b818181518110610b4b57610b4a6126cf565b5b6020026020010151604051610b6091906126b8565b60405180910390207fa7998895d8d2e7856091bd8a5895a54d831c4d6c8bd8a8611ec2c1f873872fef60405160405180910390a28080610b9f90612a0b565b915050610b26565b5050610be0565b6040517fe47d1a5100000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505050565b60606000600183604051610bf991906126b8565b9081526020016040518091039020600301541115610d0957600182604051610c2191906126b8565b9081526020016040518091039020600501805480602002602001604051908101604052809291908181526020016000905b82821015610cfe578382906000526020600020018054610c719061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054610c9d9061272d565b8015610cea5780601f10610cbf57610100808354040283529160200191610cea565b820191906000526020600020905b815481529060010190602001808311610ccd57829003601f168201915b505050505081526020019060010190610c52565b505050509050610d3b565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b600080600183604051610d5391906126b8565b9081526020016040518091039020600301541115610d9457600182604051610d7b91906126b8565b9081526020016040518091039020600701549050610dc6565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b6000606060006002805490501115610de65760019150610deb565b600091505b915091565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b600080600183604051610e5491906126b8565b9081526020016040518091039020600301541115610e9557600182604051610e7c91906126b8565b9081526020016040518091039020600201549050610ec7565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b817f0000000000000000000000000000000000000000000000000000000000000000610ef89190612a53565b341015610f31576040517fc09bb52500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b7f000000000000000000000000000000000000000000000000000000000000000060036000828254610f639190612a53565b92505081905550610f72611b8c565b83816000018190525033816020019073ffffffffffffffffffffffffffffffffffffffff16908173ffffffffffffffffffffffffffffffffffffffff16815250508281604001818152505081816060018181525050428160e001818152505060008161010001906002811115610feb57610fea6125bd565b5b90816002811115610fff57610ffe6125bd565b5b815250508060018660405161101491906126b8565b90815260200160405180910390206000820151816000019081611037919061290a565b5060208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060408201518160020155606082015181600301556080820151816004015560a08201518160050190805190602001906110b9929190611c00565b5060c08201518160060190805190602001906110d6929190611c59565b5060e082015181600701556101008201518160080160006101000a81548160ff0219169083600281111561110d5761110c6125bd565b5b02179055509050508460405161112391906126b8565b60405180910390207fcc65c6fb1d804ba1dc418f9e3659483d310357279f035d45b8ea484fd6fe4a2f60405160405180910390a25050505050565b60008060018360405161117191906126b8565b90815260200160405180910390206003015411156111bf5760018260405161119991906126b8565b908152602001604051809103902060080160009054906101000a900460ff1690506111f1565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b60007f0000000000000000000000000000000000000000000000000000000000000000905090565b60006002805480602002602001604051908101604052809291908181526020016000905b828210156112ee5783829060005260206000200180546112619061272d565b80601f016020809104026020016040519081016040528092919081815260200182805461128d9061272d565b80156112da5780601f106112af576101008083540402835291602001916112da565b820191906000526020600020905b8154815290600101906020018083116112bd57829003601f168201915b505050505081526020019060010190611242565b505050509050600280811115611307576113066125bd565b5b600182848151811061131c5761131b6126cf565b5b602002602001015160405161133191906126b8565b908152602001604051809103902060080160009054906101000a900460ff166002811115611362576113616125bd565b5b03611399576040517f4fc98f3b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600060018284815181106113b0576113af6126cf565b5b60200260200101516040516113c591906126b8565b90815260200160405180910390206004015460018385815181106113ec576113eb6126cf565b5b602002602001015160405161140191906126b8565b90815260200160405180910390206002015461141d9190612ab6565b905060005b6001838581518110611437576114366126cf565b5b602002602001015160405161144c91906126b8565b90815260200160405180910390206006018054905081101561159f574782101561158c5760006001848681518110611487576114866126cf565b5b602002602001015160405161149c91906126b8565b908152602001604051809103902060060182815481106114bf576114be6126cf565b5b9060005260206000200160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168360405161150d90612b18565b60006040518083038185875af1925050503d806000811461154a576040519150601f19603f3d011682016040523d82523d6000602084013e61154f565b606091505b505090508061158a576040517f09e6a19a00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b505b808061159790612a0b565b915050611422565b50600260018385815181106115b7576115b66126cf565b5b60200260200101516040516115cc91906126b8565b908152602001604051809103902060080160006101000a81548160ff021916908360028111156115ff576115fe6125bd565b5b0217905550505050565b606060018260405161161b91906126b8565b908152602001604051809103902060000180546116379061272d565b80601f01602080910402602001604051908101604052809291908181526020018280546116639061272d565b80156116b05780601f10611685576101008083540402835291602001916116b0565b820191906000526020600020905b81548152906001019060200180831161169357829003601f168201915b50505050509050919050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614611741576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60035481111561177d576040517fc09bb52500000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16826040516117c490612b18565b60006040518083038185875af1925050503d8060008114611801576040519150601f19603f3d011682016040523d82523d6000602084013e611806565b606091505b50509050801561185b5781600360008282546118229190612b2d565b92505081905550817f4a37b25aab49761ecf63117fe82b98d750917451133cf797507bc9fb5b96044a60405160405180910390a261188d565b6040517f09e6a19a00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5050565b6000806001836040516118a491906126b8565b9081526020016040518091039020600301541115611911576001826040516118cc91906126b8565b9081526020016040518091039020600301546001836040516118ee91906126b8565b90815260200160405180910390206002015461190a9190612ab6565b9050611943565b6040517fb01e933700000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b919050565b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16146119cd576040517fba34867000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60006002805480602002602001604051908101604052809291908181526020016000905b82821015611a9d578382906000526020600020018054611a109061272d565b80601f0160208091040260200160405190810160405280929190818152602001828054611a3c9061272d565b8015611a895780601f10611a5e57610100808354040283529160200191611a89565b820191906000526020600020905b815481529060010190602001808311611a6c57829003601f168201915b5050505050815260200190600101906119f1565b50505050905060005b8151811015611b88576001828281518110611ac457611ac36126cf565b5b6020026020010151604051611ad991906126b8565b908152602001604051809103902060008082016000611af89190611ce3565b6001820160006101000a81549073ffffffffffffffffffffffffffffffffffffffff0219169055600282016000905560038201600090556004820160009055600582016000611b479190611d23565b600682016000611b579190611d44565b60078201600090556008820160006101000a81549060ff021916905550508080611b8090612a0b565b915050611aa6565b5050565b60405180610120016040528060608152602001600073ffffffffffffffffffffffffffffffffffffffff16815260200160008152602001600081526020016000815260200160608152602001606081526020016000815260200160006002811115611bfa57611bf96125bd565b5b81525090565b828054828255906000526020600020908101928215611c48579160200282015b82811115611c47578251829081611c37919061290a565b5091602001919060010190611c20565b5b509050611c559190611d65565b5090565b828054828255906000526020600020908101928215611cd2579160200282015b82811115611cd15782518260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555091602001919060010190611c79565b5b509050611cdf9190611d89565b5090565b508054611cef9061272d565b6000825580601f10611d015750611d20565b601f016020900490600052602060002090810190611d1f9190611d89565b5b50565b5080546000825590600052602060002090810190611d419190611d65565b50565b5080546000825590600052602060002090810190611d629190611d89565b50565b5b80821115611d855760008181611d7c9190611ce3565b50600101611d66565b5090565b5b80821115611da2576000816000905550600101611d8a565b5090565b6000819050919050565b611db981611da6565b82525050565b6000602082019050611dd46000830184611db0565b92915050565b6000604051905090565b600080fd5b600080fd5b600080fd5b600080fd5b6000601f19601f8301169050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b611e4182611df8565b810181811067ffffffffffffffff82111715611e6057611e5f611e09565b5b80604052505050565b6000611e73611dda565b9050611e7f8282611e38565b919050565b600067ffffffffffffffff821115611e9f57611e9e611e09565b5b611ea882611df8565b9050602081019050919050565b82818337600083830152505050565b6000611ed7611ed284611e84565b611e69565b905082815260208101848484011115611ef357611ef2611df3565b5b611efe848285611eb5565b509392505050565b600082601f830112611f1b57611f1a611dee565b5b8135611f2b848260208601611ec4565b91505092915050565b611f3d81611da6565b8114611f4857600080fd5b50565b600081359050611f5a81611f34565b92915050565b60008060408385031215611f7757611f76611de4565b5b600083013567ffffffffffffffff811115611f9557611f94611de9565b5b611fa185828601611f06565b9250506020611fb285828601611f4b565b9150509250929050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b6000611fe782611fbc565b9050919050565b611ff781611fdc565b82525050565b60006020820190506120126000830184611fee565b92915050565b600081519050919050565b600082825260208201905092915050565b60005b83811015612052578082015181840152602081019050612037565b60008484015250505050565b600061206982612018565b6120738185612023565b9350612083818560208601612034565b61208c81611df8565b840191505092915050565b600060208201905081810360008301526120b1818461205e565b905092915050565b6120c281611fdc565b81146120cd57600080fd5b50565b6000813590506120df816120b9565b92915050565b6000806000606084860312156120fe576120fd611de4565b5b600084013567ffffffffffffffff81111561211c5761211b611de9565b5b61212886828701611f06565b935050602084013567ffffffffffffffff81111561214957612148611de9565b5b61215586828701611f06565b9250506040612166868287016120d0565b9150509250925092565b600080fd5b600080fd5b60008083601f8401126121905761218f611dee565b5b8235905067ffffffffffffffff8111156121ad576121ac612170565b5b6020830191508360018202830111156121c9576121c8612175565b5b9250929050565b600080602083850312156121e7576121e6611de4565b5b600083013567ffffffffffffffff81111561220557612204611de9565b5b6122118582860161217a565b92509250509250929050565b60006020828403121561223357612232611de4565b5b600082013567ffffffffffffffff81111561225157612250611de9565b5b61225d84828501611f06565b91505092915050565b600081519050919050565b600082825260208201905092915050565b6000819050602082019050919050565b600082825260208201905092915050565b60006122ae82612018565b6122b88185612292565b93506122c8818560208601612034565b6122d181611df8565b840191505092915050565b60006122e883836122a3565b905092915050565b6000602082019050919050565b600061230882612266565b6123128185612271565b93508360208202850161232485612282565b8060005b85811015612360578484038952815161234185826122dc565b945061234c836122f0565b925060208a01995050600181019050612328565b50829750879550505050505092915050565b6000602082019050818103600083015261238c81846122fd565b905092915050565b600067ffffffffffffffff8211156123af576123ae611e09565b5b6123b882611df8565b9050602081019050919050565b60006123d86123d384612394565b611e69565b9050828152602081018484840111156123f4576123f3611df3565b5b6123ff848285611eb5565b509392505050565b600082601f83011261241c5761241b611dee565b5b813561242c8482602086016123c5565b91505092915050565b60006020828403121561244b5761244a611de4565b5b600082013567ffffffffffffffff81111561246957612468611de9565b5b61247584828501612407565b91505092915050565b60008115159050919050565b6124938161247e565b82525050565b600081519050919050565b600082825260208201905092915050565b60006124c082612499565b6124ca81856124a4565b93506124da818560208601612034565b6124e381611df8565b840191505092915050565b6000604082019050612503600083018561248a565b818103602083015261251581846124b5565b90509392505050565b6000806000806080858703121561253857612537611de4565b5b600085013567ffffffffffffffff81111561255657612555611de9565b5b61256287828801611f06565b945050602085013567ffffffffffffffff81111561258357612582611de9565b5b61258f87828801611f06565b93505060406125a087828801611f4b565b92505060606125b187828801611f4b565b91505092959194509250565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b600381106125fd576125fc6125bd565b5b50565b600081905061260e826125ec565b919050565b600061261e82612600565b9050919050565b61262e81612613565b82525050565b60006020820190506126496000830184612625565b92915050565b60006020828403121561266557612664611de4565b5b600061267384828501611f4b565b91505092915050565b600081905092915050565b600061269282612018565b61269c818561267c565b93506126ac818560208601612034565b80840191505092915050565b60006126c48284612687565b915081905092915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b6000600282049050600182168061274557607f821691505b602082108103612758576127576126fe565b5b50919050565b60008190508160005260206000209050919050565b60006020601f8301049050919050565b600082821b905092915050565b6000600883026127c07fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff82612783565b6127ca8683612783565b95508019841693508086168417925050509392505050565b6000819050919050565b60006128076128026127fd84611da6565b6127e2565b611da6565b9050919050565b6000819050919050565b612821836127ec565b61283561282d8261280e565b848454612790565b825550505050565b600090565b61284a61283d565b612855818484612818565b505050565b5b818110156128795761286e600082612842565b60018101905061285b565b5050565b601f8211156128be5761288f8161275e565b61289884612773565b810160208510156128a7578190505b6128bb6128b385612773565b83018261285a565b50505b505050565b600082821c905092915050565b60006128e1600019846008026128c3565b1980831691505092915050565b60006128fa83836128d0565b9150826002028217905092915050565b61291382612018565b67ffffffffffffffff81111561292c5761292b611e09565b5b612936825461272d565b61294182828561287d565b600060209050601f8311600181146129745760008415612962578287015190505b61296c85826128ee565b8655506129d4565b601f1984166129828661275e565b60005b828110156129aa57848901518255600182019150602085019450602081019050612985565b868310156129c757848901516129c3601f8916826128d0565b8355505b6001600288020188555050505b505050505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b6000612a1682611da6565b91507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8203612a4857612a476129dc565b5b600182019050919050565b6000612a5e82611da6565b9150612a6983611da6565b9250828201905080821115612a8157612a806129dc565b5b92915050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b6000612ac182611da6565b9150612acc83611da6565b925082612adc57612adb612a87565b5b828204905092915050565b600081905092915050565b50565b6000612b02600083612ae7565b9150612b0d82612af2565b600082019050919050565b6000612b2382612af5565b9150819050919050565b6000612b3882611da6565b9150612b4383611da6565b9250828203905081811115612b5b57612b5a6129dc565b5b9291505056fea264697066735822122075417340a0b59d38585a15c6a24f3a24ef7df2e2f297420a46510cffcb9ec84364736f6c63430008110033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "checkUpkeep(bytes)": {
+        "details": "Returns true only if there are any complete surveys."
+      },
+      "createSurvey(string,string,uint256,uint256)": {
+        "details": "A survey can be created by anyone, but it must be calledwith both the total payout amount and the survey creationfee. The current fee is 0.01 ETH. "
+      },
+      "distributeFundsFromCompletedSurvey(uint256)": {
+        "details": "The index of s_completeSurveys is passed in from performUpkeep()."
+      },
+      "performUpkeep(bytes)": {
+        "details": "chainlink automation. perform upkeep fires if checkUpkeep returnstrue."
+      },
+      "sendUserSurveyData(string,string,address)": {
+        "details": "The SurveyCompleted event is the event listener"
+      },
+      "withdrawFromFeeHolder(uint256)": {
+        "details": "allows owner to withdraw no more than the survey creation fees."
+      }
+    },
+    "stateVariables": {
+      "i_owner": {
+        "details": "s_surveys holds all survey data, with the surveyId as the key. completed surveys stors the surveyIds for all completed surveysThe surveyCreationFee is required for all new surveys.The surveyCreationFee is for tx fees and revenue for the service"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "removeCompletedSurveys()": {
+        "notice": "Allows the owner to perform a clean up of any completed surveys"
+      },
+      "sendUserSurveyData(string,string,address)": {
+        "notice": "Function can only be called by the contract owner.This was neccissary to ensure that the user data wasa valid response to the survey. "
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 68,
+        "contract": "contracts/Surpay.sol:Surpay",
+        "label": "i_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 73,
+        "contract": "contracts/Surpay.sol:Surpay",
+        "label": "s_surveys",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_string_memory_ptr,t_struct(Survey)61_storage)"
+      },
+      {
+        "astId": 76,
+        "contract": "contracts/Surpay.sol:Surpay",
+        "label": "s_completedSurveys",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_array(t_string_storage)dyn_storage"
+      },
+      {
+        "astId": 80,
+        "contract": "contracts/Surpay.sol:Surpay",
+        "label": "s_feeHolder",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_address_payable": {
+        "encoding": "inplace",
+        "label": "address payable",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address_payable)dyn_storage": {
+        "base": "t_address_payable",
+        "encoding": "dynamic_array",
+        "label": "address payable[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_string_storage)dyn_storage": {
+        "base": "t_string_storage",
+        "encoding": "dynamic_array",
+        "label": "string[]",
+        "numberOfBytes": "32"
+      },
+      "t_enum(SurveyState)65": {
+        "encoding": "inplace",
+        "label": "enum Surpay.SurveyState",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_string_memory_ptr,t_struct(Survey)61_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => struct Surpay.Survey)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Survey)61_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Survey)61_storage": {
+        "encoding": "inplace",
+        "label": "struct Surpay.Survey",
+        "members": [
+          {
+            "astId": 41,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "companyId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 43,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "companyAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 45,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "totalPayoutAmount",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 47,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "numOfParticipantsDesired",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 49,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "numOfParticipantsFulfilled",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 52,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "surveyResponseData",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_array(t_string_storage)dyn_storage"
+          },
+          {
+            "astId": 55,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "surveyTakers",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_array(t_address_payable)dyn_storage"
+          },
+          {
+            "astId": 57,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "startTimeStamp",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 60,
+            "contract": "contracts/Surpay.sol:Surpay",
+            "label": "surveyState",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_enum(SurveyState)65"
+          }
+        ],
+        "numberOfBytes": "288"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
