@@ -71,7 +71,7 @@ contract Surpay is AutomationCompatibleInterface{
     }
 
     /* constructor */
-    constructor(uint256 _surveyCreationFee, uint256 _interval){
+    constructor(uint256 _surveyCreationFee){
         i_owner = msg.sender;
         i_surveyCreationFee = _surveyCreationFee;
     }
