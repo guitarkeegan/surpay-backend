@@ -6,7 +6,7 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
     ?
     describe.skip
     : describe("Surpay", function(){
-        let interval, surveyCreationFee;
+        let surveyCreationFee;
         const chainId = network.config.chainId;
 
         beforeEach(async function(){
@@ -15,14 +15,11 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
             await deployments.fixture(["all"]);
             surpay = await ethers.getContract("Surpay", deployer);
             surveyCreationFee = await surpay.getSurveyCreationFee();
-            interval = await surpay.getInterval();
+            
         });
 
         describe("constructor", function(){
 
-            it("should be setup with the correct interval", async function(){
-                assert.equal(interval.toString(), networkConfig[chainId]["interval"]);
-            });
             it("should be setup with correct survey creation fee", async function(){
                 assert.equal(surveyCreationFee.toString(), networkConfig[chainId]["surveyCreationFee"]);
             });
@@ -116,29 +113,19 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
  
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][0],
                     accounts[1].address
                 )
                 // params: s_surveys index, Survey.surveyTakers[0]
                 // there should be a Survey id of 1 with 1 user in surveyTakers at index 0
                 const surveyTakerAddress = await surpay.getSurveyTaker("1", 0);
-                const surveyResponseData = await surpay.getSurveyResponseData("1", 0);
-
-                // returns an array of one string
-                const surveyData = await surpay.getAllSurveyResponseData("1");
-                assert.equal(typeof surveyData[0], typeof "string")
-                // console.log(surveyData);
 
                 assert.equal(surveyTakerAddress, accounts[1].address);
-                // user data should match the data that was passed in.
-                assert.equal(surveyResponseData, networkConfig[chainId]["surveyResponseData"][0])
             });
             it("should revert if anyone other than the user tries to call the function", async function(){
                 const accounts = await ethers.getSigners();
                 const userAccountConnected = surpay.connect(accounts[1]);
                 expect(userAccountConnected.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][0],
                     accounts[1].address)
                 ).to.be.revertedWith("Surpay__NotOwner");
             })
@@ -148,14 +135,12 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 for (let i=1;i<3;i++){
                     await surpay.sendUserSurveyData(
                         networkConfig[chainId]["surveyId"][0],
-                        networkConfig[chainId]["surveyResponseData"][0],
                         accounts[i].address
                     )
                 }
 
                 await expect(surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][0],
                     accounts[3].address
                 )).to.be.revertedWith("Surpay__MaximumRespondantsReached")
             })
@@ -183,16 +168,14 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                 
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][0],
                     accounts[1].address);
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    // mary jane data
-                    networkConfig[chainId]["surveyResponseData"][1],
+                    // mary jane address
                     accounts[2].address);
 
-                await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
-                await network.provider.send("evm_mine", []);
+                // await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+                // await network.provider.send("evm_mine", []);
 
                 const {upkeepNeeded} = await surpay.callStatic.checkUpkeep([]);
                 console.log(upkeepNeeded);
@@ -211,21 +194,17 @@ const {developmentChains, networkConfig} = require("../../helpers.hardhat-config
                     );
                 startTimeStamp = await surpay.getLastTimeStamp(networkConfig[chainId]["surveyId"][0]);
                 const accounts = await ethers.getSigners();
-                // const account1ConnectedSurpay = surpay.connect(accounts[1]);
-                // const account2ConnectedSurpay = surpay.connect(accounts[2]);
                 
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][0],
                     accounts[1].address);
                 await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    // mary jane data
-                    networkConfig[chainId]["surveyResponseData"][1],
+                    // mary jane address
                     accounts[2].address);
 
-                await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
-                await network.provider.send("evm_mine", []);
+                // await network.provider.send("evm_increaseTime", [interval.toNumber() + 1]);
+                // await network.provider.send("evm_mine", []);
             });
 
             it("should send funds to all survey takers, survey taker's wallet balance should be equal to the projected payout amout, should also remove completed surveys", async function(){
