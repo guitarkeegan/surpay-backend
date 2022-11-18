@@ -7,6 +7,7 @@
   - [Tests](#tests)
   - [Questions](#questions)
   - [License?](#license)
+  - [Contract](#contract)
 
   ## Description
  
@@ -15,9 +16,8 @@
    1. A company creates a survey. 
    2. A company adds funds to the smart contract. 
    3. A user takes the survey. 
-   4. The user signs the transaction to submit their survey response to the contract. 
-   5. Chainlink Automation is brought in to check the state of the survey. 
-   6. When the survey is deemed completed, the contract distributes the funds to the users.
+   4. Chainlink Automation is brought in to check the state of the survey. 
+   5. When the survey is deemed completed, the contract distributes the funds to the users.
    ```
 
   ## Installation
@@ -30,7 +30,7 @@
 
   ## Contributions
   
-  The project was authored by Keegan Anglim and Alan Abed. If you'd like to ask any questions, please contact either one of us at the email below.
+  The project was authored by Keegan Anglim,  Alan Abed, and Christine Dang. If you'd like to ask any questions, please contact either one of us at the email below.
 
   ## Tests
 
@@ -45,4 +45,6 @@
   ## License
   This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/) - click the link to read the license.
   
- 
+  ## Contract
+
+  The Surpay contract was deployed to the Mumbai test net and can be viewed [onPolyscan](https://mumbai.polygonscan.com/address/0xcc5BcDA50F039d1be2284994dce05f8E6fB0779b#code)
