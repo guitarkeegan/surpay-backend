@@ -11,7 +11,7 @@ developmentChains.includes(network.name)
         beforeEach(async function(){
             deployer = (await getNamedAccounts()).deployer
             surpay = await ethers.getContract("Surpay", deployer);
-            // surveyCreationFee = await surpay.getSurveyCreationFee();
+            surveyCreationFee = await surpay.getSurveyCreationFee();
             // owner creats a survey
             const accounts = await ethers.getSigners();
             console.log("creating survey...")
@@ -25,7 +25,6 @@ developmentChains.includes(network.name)
             console.log("sending first survey data...")
             await surpay.sendUserSurveyData(
                 networkConfig[chainId]["surveyId"][0],
-                networkConfig[chainId]["surveyResponseData"][0],
                 "0x4A489FB4b98C31D0050084bFbAb872A6960DAcd2" // account 2
             )
         });
@@ -36,8 +35,8 @@ developmentChains.includes(network.name)
                 console.log("sending second survey data...")
                 const tx = await surpay.sendUserSurveyData(
                     networkConfig[chainId]["surveyId"][0],
-                    networkConfig[chainId]["surveyResponseData"][1],
-                    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" //account 3
+                    // networkConfig[chainId]["surveyResponseData"][1],
+                    "0x1910C439eaFd78C40bD7D1D253eC4FBe2dad1480" //surpay company
                 )
                 await tx.wait(1);
                 console.log("time to wait...")
