@@ -27,7 +27,7 @@ contract Surpay is AutomationCompatibleInterface{
     /* Type Declarations  */
 
     /**
-     * @dev Survey will hold the survey ID as well as a mapping for each user address and response data for the survey.
+     * @dev Survey structs will hold the survey ID as well as a mapping for each user address, as well as payout information.
      */
     struct Survey{
         
@@ -36,7 +36,6 @@ contract Surpay is AutomationCompatibleInterface{
         uint256 totalPayoutAmount;
         uint256 numOfParticipantsDesired;
         uint256 numOfParticipantsFulfilled;
-        string[] surveyResponseData;
         address payable[] surveyTakers;
         uint256 startTimeStamp;
         SurveyState surveyState;
@@ -65,9 +64,6 @@ contract Surpay is AutomationCompatibleInterface{
     uint256 private immutable i_surveyCreationFee;
     uint256 private s_feeHolder;
 
-    /* survey variables  */
-    uint256 private immutable i_interval;
-
     /* modifiers */
     modifier onlyOwner(){
         if (msg.sender != i_owner) revert Surpay__NotOwner();
@@ -75,10 +71,9 @@ contract Surpay is AutomationCompatibleInterface{
     }
 
     /* constructor */
-    constructor(uint256 _surveyCreationFee, uint256 _interval){
+    constructor(uint256 _surveyCreationFee){
         i_owner = msg.sender;
         i_surveyCreationFee = _surveyCreationFee;
-        i_interval = _interval;
     }
 
     /* events */
@@ -153,18 +148,17 @@ contract Surpay is AutomationCompatibleInterface{
      * 
      * @dev The SurveyCompleted event is the event listener
      */
-    function sendUserSurveyData(string memory _surveyId, string memory _surveyData, address userAddress) public onlyOwner {
+    function sendUserSurveyData(string memory _surveyId, address userAddress) public onlyOwner {
         
         if (s_surveys[_surveyId].numOfParticipantsDesired > s_surveys[_surveyId].numOfParticipantsFulfilled) {
-            // store the user address, store survey data in Survey object
-            s_surveys[_surveyId].surveyResponseData.push(_surveyData);
+            // Store the user address and increment participantsFulfilled
             s_surveys[_surveyId].surveyTakers.push(payable(userAddress));
             s_surveys[_surveyId].numOfParticipantsFulfilled++;
             // if number of participants is equal to the number of participants desired, change the survey state to COMPLETED. Add to completedSurveys array. 
             if (s_surveys[_surveyId].numOfParticipantsDesired == s_surveys[_surveyId].numOfParticipantsFulfilled) {
                 s_surveys[_surveyId].surveyState = SurveyState.COMPLETED;
                 s_completedSurveys.push(_surveyId);
-                // event listener
+                // event listener for Chainlink Automation
                 emit SurveyCompleted(_surveyId);
             }
 
@@ -254,10 +248,6 @@ contract Surpay is AutomationCompatibleInterface{
         return i_surveyCreationFee;
     }
 
-    function getInterval() public view returns(uint256) {
-        return i_interval;
-    }
-
     function getCompanyId(string memory surveyId) public view returns(string memory){
         return s_surveys[surveyId].companyId;
     }
@@ -280,23 +270,6 @@ contract Surpay is AutomationCompatibleInterface{
         
     }
     
-    function getAllSurveyResponseData(string memory surveyId) public view returns(string[] memory){
-        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
-            return  s_surveys[surveyId].surveyResponseData;
-        } else {
-            revert Surpay__SurveyNotFound();
-        }
-    }
-
-    function getSurveyResponseData(string memory surveyId, uint256 responseIndex) public view returns(string memory){
-        if (s_surveys[surveyId].numOfParticipantsDesired > 0){
-            return s_surveys[surveyId].surveyResponseData[responseIndex];
-        } else {
-            revert Surpay__SurveyNotFound();
-        }
-        
-    }
-
     function getLastTimeStamp(string memory surveyId) public view returns(uint256){
         if (s_surveys[surveyId].numOfParticipantsDesired > 0){
             return s_surveys[surveyId].startTimeStamp;

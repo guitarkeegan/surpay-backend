@@ -1,4 +1,0 @@
-DROP DATABASE IF EXISTS surpay_db;
-
-CREATE DATABASE surpay_db;
-

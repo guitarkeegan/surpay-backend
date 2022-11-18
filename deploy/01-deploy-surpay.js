@@ -6,12 +6,10 @@ module.exports = async function({getNamedAccounts, deployments}){
     const {deploy, log} = deployments;
     const {deployer} = await getNamedAccounts();
     const chainId = network.config.chainId;
-
-    const interval = networkConfig[chainId]["interval"];
     const surveyCreationFee = networkConfig[chainId]["surveyCreationFee"];
 
     log("Deploying Surpay contract")
-    const args = [surveyCreationFee, interval];
+    const args = [surveyCreationFee];
     const surpay = await deploy("Surpay", {
         from: deployer,
         args: args,
